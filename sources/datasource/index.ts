@@ -1,15 +1,15 @@
-import { DataSource } from "typeorm"
-import File from "../entities/File"
-import * as dotenv from 'dotenv'
+import { DataSource } from 'typeorm'
+import File from '../entities/File'
 
-dotenv.config()
+const databaseName = process.env.DATABASE_NAME ?? 'open-artifactory.db'
 
 const dataSource = new DataSource({
-    type: "sqlite",
-    database: "",
-    entities: [
-        File,
-    ]
+  type: 'sqlite',
+  database: databaseName,
+  entities: [
+    File,
+  ],
+  synchronize: true,
 })
 
 export default dataSource
