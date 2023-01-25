@@ -9,8 +9,8 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "start": "cd builds && node index.js",
-    "dev": "npx tsc && cd builds && node index.js"
+    "start": "cd dist && node index.js",
+    "dev": "npx tsc && cd dist && node index.js"
   },
   "author": "https://github.com/3jedgcm/open-artifactory#author",
   "license": "ISC",
