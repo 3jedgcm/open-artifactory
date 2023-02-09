@@ -14,15 +14,16 @@ class Constants {
   }
 
   get baseUrl() {
-    return this.process.env.BASE_URL ?? `http://localhost:${this.port}/`
+    const url = this.process.env.BASE_URL ?? `http://localhost:${this.port}/`
+    return url.endsWith('/') ? url : `${url}/`
   }
 
-  get destinationFolder() {
-    return this.process.env.DESTINATION_FOLDER ?? 'uploaded-files'
+  get filesFolder() {
+    return this.process.env.FILES_PATH ?? 'files'
   }
 
-  get databaseName() {
-    return this.process.env.DATABASE_NAME ?? 'open-artifactory.db'
+  get databasePath() {
+    return this.process.env.DATABASE_PATH ?? 'open-artifactory.db'
   }
 
   get maxFileSize() {

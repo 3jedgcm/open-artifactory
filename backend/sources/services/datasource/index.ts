@@ -4,7 +4,7 @@ import constants from '../../constants'
 
 export default new DataSource({
   type: 'sqlite',
-  database: constants.databaseName,
+  database: constants.databasePath,
   entities: [
     File
   ],

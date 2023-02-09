@@ -40,7 +40,7 @@ export default class File {
     createdAt!: Date
 
   get path(): string {
-    return path.join('destinationFolder', this.uuid)
+    return path.join(constants.filesFolder, this.uuid)
   }
 
   get url() {

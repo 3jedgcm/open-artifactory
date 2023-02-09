@@ -1,4 +1,6 @@
-import { json, Router } from 'express'
+import {
+  json, Request, Response, Router
+} from 'express'
 import fileRouter from './routers/fileRouter'
 import uploadRouter from './routers/uploadRouter'
 import OpenArtifactoryError from '../model/errors/OpenArtifactoryError'
@@ -11,8 +13,10 @@ router.use(json())
 router.use('/files', fileRouter)
 router.use('/upload', uploadRouter)
 
-router.get('*', () => {
-  throw new OpenArtifactoryError(404, 'Not found')
+router.get('*', (request: Request, response: Response) => {
+  const error = new OpenArtifactoryError(404, 'Not found')
+  response.status(404)
+    .send(error.httpResponse)
 })
 router.use(errorHandlerMiddleware)
 
