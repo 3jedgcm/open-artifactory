@@ -1,11 +1,13 @@
 FROM node:alpine as backend
 WORKDIR /usr/src/app
+RUN apk add g++ make python3
 COPY ./backend/sources ./sources
 COPY ./backend/package.json ./
 COPY ./backend/yarn.lock ./
 COPY ./backend/tsconfig.json ./
+COPY ./backend/tsoa.json ./
 RUN yarn install --frozen-lockfile
-RUN npx tsc
+RUN yarn build
 
 FROM node:alpine as frontend
 WORKDIR /usr/src/app
@@ -17,7 +19,11 @@ RUN yarn install --frozen-lockfile
 RUN yarn build
 
 FROM node:alpine as container
+ENV FILES_PATH="/usr/src/app/data/files"
+ENV DATABASE_PATH="/usr/src/app/data/open-artifactory.db"
+ENV OTP_SECRET_PATH="/usr/src/app/data/open-artifactory.otp.secret"
 WORKDIR /usr/src/app
+RUN apk add g++ make python3
 COPY --from=backend /usr/src/app/build ./
 COPY --from=frontend /usr/src/app/build ./public
 COPY ./backend/package.json ./
@@ -25,4 +31,4 @@ COPY ./backend/yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 EXPOSE 5000
-ENTRYPOINT [ "node", "index.js" ]
+ENTRYPOINT [ "node", "sources/index.js" ]

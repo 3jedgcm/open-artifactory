@@ -1,0 +1,1361 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"ErrorHttpResponse": {
+				"description": "Error response model",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"details": {
+						"description": "Error details",
+						"example": {}
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Uuid": {
+				"type": "string",
+				"example": "146fb209-af3b-4c67-863a-a98b641c95e5",
+				"description": "UUIDv4",
+				"pattern": "[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}"
+			},
+			"FileHttpEntity": {
+				"description": "File entity model",
+				"properties": {
+					"uuid": {
+						"$ref": "#/components/schemas/Uuid",
+						"description": "File identifier"
+					},
+					"name": {
+						"type": "string",
+						"description": "File name",
+						"example": "picture.jpg"
+					},
+					"mimeType": {
+						"type": "string",
+						"description": "File mime type",
+						"example": "image/jpeg"
+					},
+					"size": {
+						"type": "number",
+						"format": "double",
+						"description": "File size in bytes",
+						"example": "10578"
+					},
+					"hash": {
+						"type": "string",
+						"description": "File checksum md5 hash",
+						"example": "7f4fd6614997f869edf8578d81ceba9f"
+					},
+					"downloadCount": {
+						"type": "number",
+						"format": "double",
+						"description": "File download count",
+						"example": 10
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "File upload date",
+						"example": "2023-01-01T00:00:00.000Z"
+					},
+					"url": {
+						"type": "string",
+						"description": "File URL",
+						"example": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+					}
+				},
+				"required": [
+					"uuid",
+					"name",
+					"mimeType",
+					"size",
+					"hash",
+					"downloadCount",
+					"createdAt",
+					"url"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FilesHttpResponse": {
+				"description": "Multiple file entities response model",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"count": {
+						"type": "number",
+						"format": "double",
+						"description": "Stored files count",
+						"example": "3"
+					},
+					"files": {
+						"items": {
+							"$ref": "#/components/schemas/FileHttpEntity"
+						},
+						"type": "array",
+						"description": "File list"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"count",
+					"files"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StorageHttpEntity": {
+				"description": "Storage data entity",
+				"properties": {
+					"totalSpace": {
+						"type": "number",
+						"format": "double",
+						"description": "Total space in bytes"
+					},
+					"usedSpace": {
+						"type": "number",
+						"format": "double",
+						"description": "Used space in bytes"
+					},
+					"availableSpace": {
+						"type": "number",
+						"format": "double",
+						"description": "Available space in bytes"
+					},
+					"storagePath": {
+						"type": "string",
+						"description": "Absolute storage path"
+					}
+				},
+				"required": [
+					"totalSpace",
+					"usedSpace",
+					"availableSpace",
+					"storagePath"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StorageHttpResponse": {
+				"description": "Storage data response entity",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"storageData": {
+						"$ref": "#/components/schemas/StorageHttpEntity",
+						"description": "Storage data"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"storageData"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ReadStream": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FileHttpResponse": {
+				"description": "Single file entity response model",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"file": {
+						"$ref": "#/components/schemas/FileHttpEntity",
+						"description": "Updated file"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"file"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FileUpdateHttpEntity": {
+				"description": "File entity model for update",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "New file name",
+						"example": "picture.jpg",
+						"pattern": "[\\S\\s]+[\\S]+"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BearerHttpResponse": {
+				"description": "Bearer response",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"jwtToken": {
+						"type": "string",
+						"description": "JSON Web Token",
+						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+					},
+					"expireAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Token expiration date",
+						"example": "2023-01-01T00:00:00.000Z"
+					},
+					"authenticationHeader": {
+						"type": "string",
+						"description": "Authentication header to use for protected endpoints",
+						"example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"jwtToken",
+					"expireAt",
+					"authenticationHeader"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OtpHttpEntity": {
+				"description": "One-Time Password entity model",
+				"properties": {
+					"otpToken": {
+						"type": "string",
+						"description": "One-Time Password token to login",
+						"example": "1234546",
+						"pattern": "[0-9]{6}"
+					}
+				},
+				"required": [
+					"otpToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"bearer": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT",
+				"description": "Use /login endpoint to get bearer token"
+			}
+		}
+	},
+	"info": {
+		"title": "open-artifactory",
+		"version": "1.0.0",
+		"description": "Open source artifactory",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {
+			"name": "https://github.com/3jedgcm/open-artifactory#author"
+		}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/files": {
+			"get": {
+				"operationId": "GetList",
+				"responses": {
+					"200": {
+						"description": "File list",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FilesHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "3 stored files",
+											"count": 3,
+											"files": [
+												{
+													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
+													"name": "picture.jpg",
+													"mimeType": "image/jpeg",
+													"size": 10578,
+													"hash": "7f4fd6614997f869edf8578d81ceba9f",
+													"downloadCount": 10,
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												},
+												{
+													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
+													"name": "picture.jpg",
+													"mimeType": "image/jpeg",
+													"size": 10578,
+													"hash": "7f4fd6614997f869edf8578d81ceba9f",
+													"downloadCount": 10,
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												},
+												{
+													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
+													"name": "picture.jpg",
+													"mimeType": "image/jpeg",
+													"size": 10578,
+													"hash": "7f4fd6614997f869edf8578d81ceba9f",
+													"downloadCount": 10,
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Gets file list",
+				"summary": "Gets files",
+				"tags": [
+					"Files"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/files/storage": {
+			"get": {
+				"operationId": "GetStorage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StorageHttpResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Gets storage data",
+				"summary": "gets storage data",
+				"tags": [
+					"Files"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/files/{uuid}": {
+			"get": {
+				"operationId": "Download",
+				"responses": {
+					"200": {
+						"description": "File stream",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ReadStream"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown uuid",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Download file by uuid",
+				"summary": "Download file",
+				"tags": [
+					"Files"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "downloaded file uuid",
+						"in": "path",
+						"name": "uuid",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Uuid"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Updated file entity",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FileHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "146fb209-af3b-4c67-863a-a98b641c95e5 has been updated",
+											"file": {
+												"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
+												"name": "picture.jpg",
+												"mimeType": "image/jpeg",
+												"size": 10578,
+												"hash": "7f4fd6614997f869edf8578d81ceba9f",
+												"downloadCount": 10,
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown uuid",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates file values by uuid",
+				"summary": "Updates file",
+				"tags": [
+					"Files"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "updated file uuid",
+						"in": "path",
+						"name": "uuid",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Uuid"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "updated values",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FileUpdateHttpEntity",
+								"description": "updated values"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Deleted file entity",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FileHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "146fb209-af3b-4c67-863a-a98b641c95e5 has been deleted",
+											"file": {
+												"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
+												"name": "picture.jpg",
+												"mimeType": "image/jpeg",
+												"size": 10578,
+												"hash": "7f4fd6614997f869edf8578d81ceba9f",
+												"downloadCount": 10,
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown uuid",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Deletes file by uuid",
+				"summary": "Deletes file",
+				"tags": [
+					"Files"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "deleted file uuid",
+						"in": "path",
+						"name": "uuid",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Uuid"
+						}
+					}
+				]
+			}
+		},
+		"/files/{uuid}/change-uuid": {
+			"post": {
+				"operationId": "ChangeUuid",
+				"responses": {
+					"200": {
+						"description": "Updated file entity",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FileHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "323f80a1-0a6c-44ef-a067-c9c6a86526fa uuid has been changed by 146fb209-af3b-4c67-863a-a98b641c95e5",
+											"file": {
+												"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
+												"name": "picture.jpg",
+												"mimeType": "image/jpeg",
+												"size": 10578,
+												"hash": "7f4fd6614997f869edf8578d81ceba9f",
+												"downloadCount": 10,
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown uuid",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Changes file uuid",
+				"summary": "Changes file uuid",
+				"tags": [
+					"Files"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "updated file uuid",
+						"in": "path",
+						"name": "uuid",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Uuid"
+						}
+					}
+				]
+			}
+		},
+		"/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Bearer token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BearerHttpResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Generates a JWT token from One-Time Password token",
+				"summary": "Login into Open-artifactory",
+				"tags": [
+					"Login"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/OtpHttpEntity"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/upload": {
+			"post": {
+				"operationId": "Upload",
+				"responses": {
+					"201": {
+						"description": "Created file entity",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FileHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 201,
+											"error": false,
+											"message": "picture.jpg is stored with uuid 146fb209-af3b-4c67-863a-a98b641c95e5",
+											"file": {
+												"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
+												"name": "picture.jpg",
+												"mimeType": "image/jpeg",
+												"size": 10578,
+												"hash": "7f4fd6614997f869edf8578d81ceba9f",
+												"downloadCount": 10,
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Uploads new file and allows to change file name",
+				"summary": "Uploads file",
+				"tags": [
+					"Upload"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary",
+										"description": "file to upload"
+									},
+									"name": {
+										"type": "string",
+										"description": "optional file name"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "http://localhost:5000/"
+		}
+	]
+}
