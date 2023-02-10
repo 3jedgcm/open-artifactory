@@ -1,5 +1,12 @@
 import HttpResponse from './HttpResponse'
 
+/**
+ * Error response model
+ */
 export default interface ErrorHttpResponse extends HttpResponse {
-  stacktrace?: unknown
+  /**
+   * Error details
+   * @example {}
+   */
+  details?: unknown
 }
