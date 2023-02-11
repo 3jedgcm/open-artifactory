@@ -4,7 +4,7 @@ import { FaDocker, FaGithub } from 'react-icons/fa'
 import { encode } from 'base-64'
 import List from './List'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : ""
 export default function Authentication() {
 
   const [loading, setLoading] = useState(false)

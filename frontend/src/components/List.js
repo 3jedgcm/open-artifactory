@@ -6,7 +6,7 @@ import { FaDownload } from 'react-icons/fa'
 import { BsArrowCounterclockwise, BsArrowLeft, BsArrowRight } from 'react-icons/bs'
 import { BiLogOut } from 'react-icons/bi'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : ""
 
 const Item = function ({ authorization, hash, size, name, url, mimeType = "unknown", uuid, downloadCount, createdAt, onUpdate = () => { } }) {
 
