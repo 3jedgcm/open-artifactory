@@ -1,48 +1,79 @@
 import * as dotenv from 'dotenv'
-import * as Process from 'process'
 
+/**
+ * Constants definitions
+ */
 class Constants {
-  private process: typeof Process
-
   constructor() {
     dotenv.config()
-    this.process = process
   }
 
+  /**
+   * Listened port by HTTP server
+   */
   get port() {
-    return this.process.env.PORT ?? 5000
+    return process.env.PORT ?? 5000
   }
 
+  /**
+   * Public URL to reach API
+   * Used to provide file URLs
+   */
   get baseUrl() {
-    const url = this.process.env.BASE_URL ?? `http://localhost:${this.port}/`
+    const url = process.env.BASE_URL ?? `http://localhost:${this.port}/`
     return url.endsWith('/') ? url : `${url}/`
   }
 
-  get filesFolder() {
-    return this.process.env.FILES_PATH ?? 'files'
+  /**
+   * Path of folder to upload files
+   */
+  get filesFolderPath() {
+    return process.env.FILES_PATH ?? 'data/files'
   }
 
-  get databasePath() {
-    return this.process.env.DATABASE_PATH ?? 'open-artifactory.db'
+  /**
+   * Path of SQLite3 database
+   */
+  get databaseFilePath() {
+    return process.env.DATABASE_PATH ?? 'data/open-artifactory.db'
   }
 
-  get maxFileSize() {
-    let maxFileSize = Infinity
-    if (
-      this.process.env.MAX_FILE_SIZE
-      && Number.isSafeInteger(this.process.env.MAX_FILE_SIZE)
-    ) {
-      maxFileSize = Number.parseFloat(this.process.env.MAX_FILE_SIZE)
-    }
-    return maxFileSize
+  /**
+   * One-Time Password service name
+   */
+  get otpServiceName() {
+    return process.env.OTP_SERVICE_NAME ?? 'open-artifactory'
   }
 
-  get adminLogin() {
-    return this.process.env.ADMIN_LOGIN ?? 'admin'
+  /**
+   * Path of otp secret file
+   */
+  get otpFilePath() {
+    return process.env.OTP_SECRET_PATH ?? 'data/open-artifactory.otp.secret'
   }
 
-  get adminPassword() {
-    return this.process.env.ADMIN_PASSWORD ?? 'admin'
+  /**
+   * JWT secret
+   */
+  get jwtSecret() {
+    return process.env.JWT_SECRET ?? 'open-artifactory-secret'
+  }
+
+  /**
+   * JWT expiration time
+   * Accept value in seconds or add unit (ex : '1h' or '2 days')
+   */
+  get jwtExpirationTime() {
+    return process.env.JWT_EXPIRATION_TIME ?? '20m'
+  }
+
+  /**
+   * Storage limit in bytes (-1 = no limit)
+   */
+  get storageLimit() {
+    return Number.isInteger(process.env.STORAGE_LIMIT)
+      ? Number(process.env.STORAGE_LIMIT)
+      : -1
   }
 }
 
