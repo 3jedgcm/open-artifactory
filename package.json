@@ -1,5 +1,5 @@
 {
     "scripts": {
-        "build": "docker build . -t 3jedgcm/open-artifactory:latest "
+        "build": "docker build . -t 3jedgcm/open-artifactory:latest"
     }
 }
