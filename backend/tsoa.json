@@ -21,7 +21,7 @@
     "host": "localhost:5000"
   },
   "routes": {
-    "routesDir": "generated/tsoa",
+    "routesDir": "sources/tsoa",
     "authenticationModule": "sources/api/middlewares/tsoaAuthenticationMiddleware.ts"
   }
 }

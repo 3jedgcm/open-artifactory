@@ -289,7 +289,7 @@
 					},
 					"jwtToken": {
 						"type": "string",
-						"description": "JSON Web Token\n// eslint-disable-next-line max-len",
+						"description": "JSON Web Token\r\n// eslint-disable-next-line max-len",
 						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 					},
 					"expireAt": {

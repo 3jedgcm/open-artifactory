@@ -4,7 +4,7 @@ import {
 import path from 'path'
 import OpenArtifactoryError from '../model/errors/OpenArtifactoryError'
 import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware'
-import { RegisterRoutes } from '../../generated/tsoa/routes'
+import { RegisterRoutes } from '../tsoa/routes'
 
 /**
  * Default router
@@ -26,7 +26,7 @@ router.use(json())
  * Root endpoint for front end interface
  */
 router.get('/', (request: Request, response: Response) => {
-  response.sendFile(path.join('/', 'public', 'index.html'))
+  response.sendFile(path.join(__dirname, '/../public/index.html'))
 })
 
 /**
@@ -37,7 +37,7 @@ RegisterRoutes(router)
 /**
  * Define default route (404 Not found)
  */
-router.use(expressStatic(path.join('./', 'public')))
+router.use(expressStatic(path.join(__dirname, '/../public')))
 
 router.get('*', (request: Request, response: Response) => {
   const error = new OpenArtifactoryError(404, 'Not found')
