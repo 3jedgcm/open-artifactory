@@ -19,7 +19,6 @@ RUN yarn install --frozen-lockfile
 RUN yarn build
 
 FROM node:alpine as container
-ENV PUBLIC_PATH="/usr/src/app/public"
 ENV FILES_PATH="/usr/src/app/data/files"
 ENV DATABASE_PATH="/usr/src/app/data/open-artifactory.db"
 ENV OTP_SECRET_PATH="/usr/src/app/data/open-artifactory.otp.secret"
