@@ -24,7 +24,7 @@ import FilesHttpResponse from '../../model/httpResponses/FilesHttpRepsonse'
 import FileUpdateHttpEntity from '../../model/httpEntites/FileUpdateHttpEntity'
 import { Uuid } from '../../model/httpEntites/primitivesHttpEnties'
 import ErrorHttpResponse from '../../model/httpResponses/ErrorResponse'
-import { FileExample } from '../openApiExamples'
+import { fileExample, storageExample } from '../openApiExamples'
 import StorageHttpResponse from '../../model/httpResponses/StorageHttpResponse'
 
 @Response<ErrorHttpResponse>(500, 'Internal server error', {
@@ -57,7 +57,7 @@ export class FilesController extends Controller {
     error: false,
     message: '3 stored files',
     count: 3,
-    files: [FileExample, FileExample, FileExample]
+    files: [fileExample, fileExample, fileExample]
   })
   @Response<ErrorHttpResponse>(401, 'Unauthorized', {
     httpCode: 401,
@@ -88,16 +88,22 @@ export class FilesController extends Controller {
     message: 'Unauthorized',
     error: true
   })
+  @Example<StorageHttpResponse>({
+    httpCode: 200,
+    error: false,
+    message: 'Disk space available : 3221225472 bytes (60.00 %)',
+    storageData: storageExample
+  })
   @Security('bearer')
   @Get('storage')
   async getStorage(): Promise<StorageHttpResponse> {
     const storageData = await FileService.getStorageData()
-    const percentage = (storageData.availableSpace / storageData.totalSpace) * 100
+    const percentage = ((storageData.availableSpace / storageData.totalSpace) * 100).toFixed(2)
 
     return {
       httpCode: 200,
       error: false,
-      message: `Disk space available : ${storageData.availableSpace} (${percentage}%)}`,
+      message: `Disk space available : ${storageData.availableSpace} bytes (${percentage}%)`,
       storageData
     }
   }
@@ -133,7 +139,7 @@ export class FilesController extends Controller {
     httpCode: 200,
     error: false,
     message: '323f80a1-0a6c-44ef-a067-c9c6a86526fa uuid has been changed by 146fb209-af3b-4c67-863a-a98b641c95e5',
-    file: FileExample
+    file: fileExample
   })
   @Response<ErrorHttpResponse>(404, 'Unknown uuid', {
     httpCode: 422,
@@ -169,7 +175,7 @@ export class FilesController extends Controller {
     httpCode: 200,
     error: false,
     message: '146fb209-af3b-4c67-863a-a98b641c95e5 has been updated',
-    file: FileExample
+    file: fileExample
   })
   @Response<ErrorHttpResponse>(404, 'Unknown uuid', {
     httpCode: 422,
@@ -207,7 +213,7 @@ export class FilesController extends Controller {
     httpCode: 200,
     error: false,
     message: '146fb209-af3b-4c67-863a-a98b641c95e5 has been deleted',
-    file: FileExample
+    file: fileExample
   })
   @Response<ErrorHttpResponse>(404, 'Unknown uuid', {
     httpCode: 422,

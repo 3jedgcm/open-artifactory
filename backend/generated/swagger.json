@@ -152,17 +152,20 @@
 					"totalSpace": {
 						"type": "number",
 						"format": "double",
-						"description": "Total space in bytes"
+						"description": "Total space in bytes",
+						"example": 5368709120
 					},
 					"usedSpace": {
 						"type": "number",
 						"format": "double",
-						"description": "Used space in bytes"
+						"description": "Used space in bytes",
+						"example": 2147483648
 					},
 					"availableSpace": {
 						"type": "number",
 						"format": "double",
-						"description": "Available space in bytes"
+						"description": "Available space in bytes",
+						"example": 3221225472
 					},
 					"storagePath": {
 						"type": "string",
@@ -286,7 +289,7 @@
 					},
 					"jwtToken": {
 						"type": "string",
-						"description": "JSON Web Token",
+						"description": "JSON Web Token\n// eslint-disable-next-line max-len",
 						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 					},
 					"expireAt": {
@@ -294,11 +297,6 @@
 						"format": "date-time",
 						"description": "Token expiration date",
 						"example": "2023-01-01T00:00:00.000Z"
-					},
-					"authenticationHeader": {
-						"type": "string",
-						"description": "Authentication header to use for protected endpoints",
-						"example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 					}
 				},
 				"required": [
@@ -306,8 +304,7 @@
 					"error",
 					"message",
 					"jwtToken",
-					"expireAt",
-					"authenticationHeader"
+					"expireAt"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -378,7 +375,7 @@
 													"hash": "7f4fd6614997f869edf8578d81ceba9f",
 													"downloadCount": 10,
 													"createdAt": "2023-01-01T00:00:00.000Z",
-													"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+													"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
 												},
 												{
 													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
@@ -388,7 +385,7 @@
 													"hash": "7f4fd6614997f869edf8578d81ceba9f",
 													"downloadCount": 10,
 													"createdAt": "2023-01-01T00:00:00.000Z",
-													"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+													"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
 												},
 												{
 													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
@@ -398,7 +395,7 @@
 													"hash": "7f4fd6614997f869edf8578d81ceba9f",
 													"downloadCount": 10,
 													"createdAt": "2023-01-01T00:00:00.000Z",
-													"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+													"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
 												}
 											]
 										}
@@ -497,6 +494,21 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/StorageHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "Disk space available : 3221225472 bytes (60.00 %)",
+											"storageData": {
+												"totalSpace": 5368709120,
+												"usedSpace": 2147483648,
+												"availableSpace": 3221225472,
+												"storagePath": "/open-artifactory/data/files"
+											}
+										}
+									}
 								}
 							}
 						}
@@ -704,7 +716,7 @@
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
 												"downloadCount": 10,
 												"createdAt": "2023-01-01T00:00:00.000Z",
-												"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
 											}
 										}
 									}
@@ -856,7 +868,7 @@
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
 												"downloadCount": 10,
 												"createdAt": "2023-01-01T00:00:00.000Z",
-												"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
 											}
 										}
 									}
@@ -998,7 +1010,7 @@
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
 												"downloadCount": 10,
 												"createdAt": "2023-01-01T00:00:00.000Z",
-												"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
 											}
 										}
 									}
@@ -1125,6 +1137,17 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/BearerHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "Successfully logged in",
+											"jwtToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+											"expireAt": "2023-01-01T00:00:00.000Z"
+										}
+									}
 								}
 							}
 						}
@@ -1240,7 +1263,7 @@
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
 												"downloadCount": 10,
 												"createdAt": "2023-01-01T00:00:00.000Z",
-												"url": "http://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
 											}
 										}
 									}

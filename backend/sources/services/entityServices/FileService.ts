@@ -23,15 +23,26 @@ export default class FileService {
    * @return {@link File}[] File entity array
    */
   static async getList(): Promise<File[]> {
-    const files = await repository.files.find()
-    files.filter((file) => {
-      if (!fs.existsSync(file.path)) {
-        fs.unlinkSync(file.path)
-        return false
+    let queryRunner!: QueryRunner
+    try {
+      queryRunner = datasource.createQueryRunner()
+      const files = await repository.files.find()
+      files.filter((file) => {
+        if (!fs.existsSync(file.path)) {
+          repository.files.remove(file)
+          return false
+        }
+        return true
+      })
+      await queryRunner.commitTransaction()
+
+      return files
+    } catch (error) {
+      if (queryRunner && queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction()
       }
-      return true
-    })
-    return files
+      throw error
+    }
   }
 
   /**

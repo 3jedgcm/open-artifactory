@@ -17,7 +17,7 @@ import FileHttpResponse from '../../model/httpResponses/FileHttpResponse'
 import FileHttpEntity from '../../model/httpEntites/FileHttpEntity'
 import ErrorHttpResponse from '../../model/httpResponses/ErrorResponse'
 import { FileName } from '../../model/httpEntites/primitivesHttpEnties'
-import { FileExample } from '../openApiExamples'
+import { fileExample } from '../openApiExamples'
 
 @Response<ErrorHttpResponse>(500, 'Internal server error', {
   httpCode: 500,
@@ -40,7 +40,7 @@ export class UploadController extends Controller {
       httpCode: 201,
       error: false,
       message: 'picture.jpg is stored with uuid 146fb209-af3b-4c67-863a-a98b641c95e5',
-      file: FileExample
+      file: fileExample
     }
   )
   @Response<ErrorHttpResponse>(422, 'Validation failed error', {

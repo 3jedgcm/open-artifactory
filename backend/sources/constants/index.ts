@@ -71,9 +71,7 @@ class Constants {
    * Storage limit in bytes (-1 = no limit)
    */
   get storageLimit() {
-    return Number.isInteger(process.env.STORAGE_LIMIT)
-      ? Number(process.env.STORAGE_LIMIT)
-      : -1
+    return Number(process.env.STORAGE_LIMIT) ?? -1
   }
 }
 
