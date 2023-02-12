@@ -1,39 +1,97 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Container, Divider, Flex, Heading, HStack, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text, useToast } from '@chakra-ui/react'
+import { Button, Card, CardBody, CardFooter, CardHeader, Container, Divider, Flex, FormControl, FormLabel, Heading, HStack, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Progress, Spinner, Text, useToast } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { FaInfoCircle, FaLink, FaPen, FaTrash } from 'react-icons/fa'
+import { FaArrowLeft, FaArrowRight, FaDoorOpen, FaInfoCircle, FaLink, FaPen, FaSync, FaTrash, FaUndo } from 'react-icons/fa'
 import moment from 'moment'
 import { FaDownload } from 'react-icons/fa'
-import { BsArrowCounterclockwise, BsArrowLeft, BsArrowRight } from 'react-icons/bs'
-import { BiLogOut } from 'react-icons/bi'
+import QRCode from "react-qr-code"
 
 const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : ""
+
+const getMb = (size) => (size / 1000000).toFixed(2)
+const getGo = (size) => (size / 1000000000).toFixed(2)
 
 const Item = function ({ authorization, hash, size, name, url, mimeType = "unknown", uuid, downloadCount, createdAt, onUpdate = () => { } }) {
 
 
     const [edit, setEdit] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [loadingInformation, setLoadingInformation] = useState(false)
+    const [information, setInformation] = useState(false)
 
     const toast = useToast()
     const date = moment(createdAt).format("DD/MM/YYYY HH:mm:ss")
 
-    const deleteFile = async () => {
-        let result = await fetch(BASE_URL + "/files/" + uuid, {
+    const changeUuid = async (name) => {
+        setLoading(true)
+        let result = await fetch(BASE_URL + "/files/" + uuid + "/change-uuid", {
             headers: {
-                Authorization: authorization
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: "Bearer " + authorization
             },
-            method: 'DELETE'
+            method: 'POST'
         })
         let resultJSON = await result.json()
         if (resultJSON.error) {
             toast({
-                title: "An error occured",
-                description: resultJSON.data.message,
+                title: resultJSON.httpCode + " " + resultJSON.message,
+                description: "Please retry later",
                 status: 'error',
                 duration: 9000,
                 isClosable: true,
             })
         } else {
             onUpdate()
+        }
+        setLoading(false)
+    }
+
+    const editName = async (name) => {
+        let result = await fetch(BASE_URL + "/files/" + uuid, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: "Bearer " + authorization
+            },
+            method: 'PUT',
+            body: JSON.stringify({
+                name: name
+            })
+        })
+        let resultJSON = await result.json()
+        if (resultJSON.error) {
+            toast({
+                title: resultJSON.httpCode + " " + resultJSON.message,
+                description: "Please retry later",
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+            })
+        } else {
+            onUpdate()
+        }
+    }
+
+    const deleteFile = async () => {
+        setLoading(true)
+        let result = await fetch(BASE_URL + "/files/" + uuid, {
+            headers: {
+                Authorization: "Bearer " + authorization
+            },
+            method: 'DELETE'
+        })
+        let resultJSON = await result.json()
+        if (resultJSON.error) {
+            toast({
+                title: resultJSON.httpCode + " " + resultJSON.message,
+                description: "Please retry later",
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+            })
+        } else {
+            onUpdate()
+            setEdit(false)
             toast({
                 description: "The file has been successfully deleted",
                 status: 'success',
@@ -41,42 +99,77 @@ const Item = function ({ authorization, hash, size, name, url, mimeType = "unkno
                 isClosable: true,
             })
         }
+        setLoading(false)
     }
 
-
     const copyLink = () => {
-        navigator.clipboard.writeText(url)
-        toast({
-            description: "Copied link to clipboard",
-            status: 'success',
-            duration: 2000,
-            isClosable: true,
-        })
+        setLoading(true)
+        setTimeout(() => {
+            setLoading(false)
+            navigator.clipboard.writeText(url)
+            toast({
+                description: "Copied link to clipboard",
+                status: 'success',
+                duration: 2000,
+                isClosable: true,
+            })
+        }, 300)
     }
 
 
     return (
         <>
-            <Modal isOpen={edit} onClose={() => setEdit(false)}>
+            <Modal isOpen={information} onClose={() => setInformation(false)}>
                 <ModalOverlay />
                 <ModalContent marginLeft={4} marginRight={4}>
                     <ModalHeader>
-                        <Text fontSize='xl' fontWeight='bold' color='blackAlpha.700' >{"Artifact informations"}</Text>
+                        <Text fontSize='2xl' textAlign='center' fontWeight='bold' color='blackAlpha.700' >{"Informations"}</Text>
                     </ModalHeader>
+                    <Divider />
                     <ModalCloseButton />
-                    <ModalBody >
-                        <Text fontSize='md' color='blackAlpha.700' >{"UUID : " + uuid}</Text>
+                    <ModalBody mt={2} >
+                        <Text fontSize='md' color='blackAlpha.700' >{"Reference : " + uuid}</Text>
                         <Text fontSize='md' color='blackAlpha.700' >{"Name : " + name}</Text>
                         <Text fontSize='md' color='blackAlpha.700' >{"Hash : " + hash}</Text>
                         <Divider marginTop={2} marginBottom={2} />
                         <Text fontSize='md' color='blackAlpha.700' >{"Created at : " + date}</Text>
                         <Text fontSize='md' color='blackAlpha.700' >{"Mimetype : " + mimeType}</Text>
-                        <Text fontSize='md' color='blackAlpha.700' >{"Size : " + size + " octets"}</Text>
-                        <Divider marginTop={2} marginBottom={2} />
                         <Text fontSize='md' color='blackAlpha.700' >{"Download time : " + downloadCount}</Text>
+                        <Text fontSize='md' color='blackAlpha.700' >{"Size : " + getMb(size) + " Mo"}</Text>
+                        <Divider marginTop={2} marginBottom={2} />
                     </ModalBody>
-                    <ModalFooter >
-                        <Button size='sm' onClick={() => { setEdit(false); deleteFile() }} _hover={{ backgroundColor: 'red.700' }} backgroundColor='red.500' color='white'>
+                    <ModalFooter justifyContent='center' mb={4}>
+                        <QRCode cursor='pointer' onClick={() => copyLink()} value={url}  size={164} />
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+            <Modal isOpen={edit} onClose={() => setEdit(false)}>
+                <ModalOverlay />
+                <ModalContent marginLeft={4} marginRight={4}>
+                    <ModalHeader>
+                        <Text fontSize='2xl' fontWeight='bold' color='blackAlpha.700' >{"Manage"}</Text>
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <Divider />
+                    <ModalBody mt={2} >
+                        <FormControl >
+                            <FormLabel fontWeight='bold' color='blackAlpha.700'>Reference</FormLabel>
+                            <HStack>
+                                <Input borderWidth={2} fontWeight='bold' color='blackAlpha.800' errorBorderColor='red.500' disabled value={uuid} />
+                                <Button isLoading={loading} size='md' onClick={() => changeUuid()}>
+                                    <FaSync color='var(--chakra-colors-blackAlpha-700)' />
+                                </Button>
+                            </HStack>
+                        </FormControl>
+                        <FormControl mt={2} >
+                            <FormLabel fontWeight='bold' color='blackAlpha.700'>Name</FormLabel>
+                            <HStack>
+                                <Input borderWidth={2} fontWeight='bold' color='blackAlpha.800' errorBorderColor='red.500' defaultValue={name} onChange={(event) => { editName(event.currentTarget.value) }} />
+                            </HStack>
+                        </FormControl>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button ml={2} size='sm' onClick={() => deleteFile()} _hover={{ backgroundColor: 'red.700' }} backgroundColor='red.500' color='white'>
                             <FaTrash />
                         </Button>
                     </ModalFooter>
@@ -85,33 +178,27 @@ const Item = function ({ authorization, hash, size, name, url, mimeType = "unkno
             <Card variant='outline' mt={1} >
                 <CardBody p={1}>
                     <Flex paddingLeft={1} paddingRight={1} >
-                        <HStack display={{ base: 'none', sm: 'none', md: 'none', lg: 'initial' }} flex={3} color='blue.900' alignSelf='center' overflow='hidden'>
-                            <Text fontSize='sm' fontWeight='bold' color='blackAlpha.700' >{uuid}</Text>
-                        </HStack>
-                        <HStack flex={2} color='blue.900' alignSelf='center'>
-                            <Text fontSize='sm' fontWeight='bold' color='blackAlpha.700' >{name}</Text>
+                        <HStack flex={4} color='blue.900' alignSelf='center'>
+                            <Text fontSize='md' fontWeight='bold' color='blackAlpha.700' >{name}</Text>
                         </HStack>
                         <HStack display={{ base: 'none', sm: 'none', md: 'initial' }} flex={1} justifyContent='center' alignSelf='center'>
-                            <Text fontSize='sm' fontWeight='bold' color='blackAlpha.700' >{(size / 1000000).toFixed(2) + " MB"}</Text>
+                            <Text fontSize='md' fontWeight='bold' color='blackAlpha.700' >{getMb(size) + " Mo"}</Text>
                         </HStack>
                         <HStack display={{ base: 'none', sm: 'none', md: 'initial' }} flex={1} align='center' justifyContent='center' alignSelf='center'>
                             <Text fontSize='md' fontWeight='bold' color='blackAlpha.700' textAlign={'center'} >{downloadCount}</Text>
                         </HStack>
                         <HStack flex={2} justifyContent='end' alignSelf='center'>
                             <Button display={{ base: 'none', sm: 'none', md: 'initial' }} size='sm' onClick={() => { window.open(url, "_blank"); setTimeout(() => onUpdate(), 1000) }} >
-                                <FaDownload />
+                                <FaDownload color='var(--chakra-colors-blackAlpha-700)' />
                             </Button>
                             <Button size='sm' onClick={() => copyLink()}>
-                                <FaLink />
-                            </Button>
-                            <Button size='sm' onClick={() => copyLink()}>
-                                <FaPen />
+                                <FaLink color='var(--chakra-colors-blackAlpha-700)' />
                             </Button>
                             <Button size='sm' onClick={() => setEdit(true)}>
-                                <FaInfoCircle />
+                                <FaPen color='var(--chakra-colors-blackAlpha-700)' />
                             </Button>
-                            <Button size='sm' onClick={() => deleteFile()} _hover={{ backgroundColor: 'red.700' }} backgroundColor='red.500' color='white'>
-                                <FaTrash />
+                            <Button size='sm' onClick={() => setInformation(true)}>
+                                <FaInfoCircle color='var(--chakra-colors-blackAlpha-700)' />
                             </Button>
                         </HStack>
                     </Flex>
@@ -126,40 +213,87 @@ export default function List({ authorization, onDisconnect }) {
     const [loading, setLoading] = useState(true)
     const [files, setFiles] = useState([])
     const [page, setPage] = useState(0)
+    const [availableStorage, setAvailableStorage] = useState(0)
+    const [totalStorage, setTotalStorage] = useState(0)
     const filePerPage = 10
 
     const toast = useToast()
 
     useEffect(() => {
         getFiles()
+        getStorage()
     }, [])
 
-    const getFiles = async () => {
-        setLoading(true)
-        let result = await fetch(BASE_URL + "/files", {
-            headers: {
-                Authorization: authorization
+    const getStorage = async () => {
+        try {
+            let result = await fetch(BASE_URL + "/files/storage", {
+                headers: {
+                    Authorization: "Bearer " + authorization
+                }
+            })
+            let resultJSON = await result.json()
+            if (resultJSON.error) {
+                toast({
+                    title: resultJSON.httpCode + " " + resultJSON.message,
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                })
+            } else {
+                setTotalStorage(resultJSON.storageData.totalSpace)
+                setAvailableStorage(resultJSON.storageData.availableSpace)
             }
-        })
-        let resultJSON = await result.json()
-        if (resultJSON.error) {
-            setFiles([])
+        } catch (error) {
             toast({
-                title: "An error occured",
-                description: resultJSON.data.message,
+                title: "Internal error server",
+                description: "Please retry later",
                 status: 'error',
                 duration: 9000,
                 isClosable: true,
             })
-        } else {
-            setFiles(resultJSON.files)
         }
-        setTimeout(() => {
-            setLoading(false)
-        }, 500)
     }
 
-    const maxPage = Math.floor((files.length - 1) / filePerPage)
+    const getFiles = async () => {
+        try {
+            setLoading(true)
+            let result = await fetch(BASE_URL + "/files", {
+                headers: {
+                    Authorization: "Bearer " + authorization
+                }
+            })
+            let resultJSON = await result.json()
+            if (resultJSON.error) {
+                setLoading(false)
+                setFiles([])
+                toast({
+                    title: resultJSON.httpCode + " " + resultJSON.message,
+                    description: "Please retry later",
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                })
+            } else {
+                setFiles(resultJSON.files)
+                if (Math.floor((resultJSON.files.length - 1) / filePerPage) < page) {
+                    previousPage()
+                }
+                setLoading(false)
+            }
+        } catch (error) {
+            setLoading(false)
+            setFiles([])
+            toast({
+                title: "Internal error server",
+                description: "Please retry later",
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+            })
+        }
+    }
+
+    const maxPage = files.length == 0 ? 0 : Math.floor((files.length - 1) / filePerPage)
 
     const nextPage = () => {
         if (maxPage > page) {
@@ -173,19 +307,17 @@ export default function List({ authorization, onDisconnect }) {
         }
     }
 
+    const availablePercent = ((availableStorage * 100) / totalStorage).toFixed(2)
+
+    
+
     return (
-        <Container maxW={1200}  >
-            <Card variant='outline' marginTop={4} marginBottom={4}   >
+        <Container maxW={900}  >
+            <Card variant='outline' marginTop={4} marginBottom={4} minHeight={450}  >
                 <CardHeader pb={1}>
                     <Heading size='lg' textAlign={{ base: 'center', sm: 'center', md: 'start' }} fontWeight='bold' color='blackAlpha.700'>Open Artifactory</Heading>
-                    {
-                        loading ?
-                            <Heading size='md' textAlign={{ base: 'center', sm: 'center', md: 'start' }} fontWeight='bold' color='blackAlpha.700'>{"Loading ..."}</Heading>
-                            :
-                            <Heading size='md' textAlign={{ base: 'center', sm: 'center', md: 'start' }} fontWeight='bold' color='blackAlpha.700'>{"Total : " + files.length + " file" + (files.length > 0 ? "s" : "")}</Heading>
-                    }
                 </CardHeader>
-                <CardBody >
+                <CardBody>
                     {
                         loading && files.length == 0 ?
                             <Flex justifyContent={'center'} margin={4}>
@@ -193,22 +325,19 @@ export default function List({ authorization, onDisconnect }) {
                             </Flex>
                             :
                             files.length == 0 ?
-                                <Text>No file found</Text>
+                                <Text fontSize='lg'  textAlign='center' fontWeight='bold' color='blackAlpha.700'>No artifact found</Text>
                                 :
                                 <Card variant='outline' mb={2} display={{ base: 'none', sm: 'none', md: 'inherit' }} >
                                     <CardBody p={2} >
                                         <Flex justifyContent='space-around'>
-                                            <HStack display={{ md: 'none', lg: 'initial' }} flex={3} justifyContent='start' color='blackAlpha.800' alignSelf='center' >
-                                                <Heading size='sm' fontWeight='bold' color='blackAlpha.700' >{"UUID"}</Heading>
-                                            </HStack>
-                                            <HStack flex={2} justifyContent='start' color='blackAlpha.800' alignSelf='center' >
-                                                <Heading size='sm' fontWeight='bold' color='blackAlpha.700' >{"Name"}</Heading>
+                                            <HStack flex={4} justifyContent='start' color='blackAlpha.800' alignSelf='center' >
+                                                <Text size='md' fontWeight='bold' color='blackAlpha.700' >{"Name"}</Text>
                                             </HStack>
                                             <HStack flex={1} justifyContent='start' alignSelf='center' >
-                                                <Heading size='sm' fontWeight='bold' color='blackAlpha.700' >{"Size"}</Heading>
+                                                <Text size='md' fontWeight='bold' color='blackAlpha.700' >{"Size"}</Text>
                                             </HStack>
                                             <HStack flex={1} justifyContent='center' alignSelf='center'  >
-                                                <Heading size='sm' fontWeight='bold' textAlign={'center'} color='blackAlpha.700' >{"Download"}</Heading>
+                                                <Text size='md' fontWeight='bold' textAlign={'center'} color='blackAlpha.700' >{"Downloads"}</Text>
                                             </HStack>
                                             <HStack flex={2} justifyContent='end' alignSelf='center'  >
                                             </HStack>
@@ -219,29 +348,34 @@ export default function List({ authorization, onDisconnect }) {
                     {
                         files.slice(filePerPage * page, filePerPage * (page + 1)).map((file, index) => {
                             return (
-                                <Item authorization={authorization} hash={file.hash} mimeType={file.mimeType} size={file.size} key={index} uuid={file.uuid} createdAt={file.createdAt} onUpdate={() => getFiles()} downloadCount={file.downloadCount} name={file.name} url={file.url} />
+                                <Item authorization={authorization} hash={file.hash} mimeType={file.mimeType} size={file.size} key={index} uuid={file.uuid} createdAt={file.createdAt} onUpdate={() => { getFiles(); getStorage() }} downloadCount={file.downloadCount} name={file.name} url={file.url} />
                             )
                         })
                     }
                 </CardBody>
                 <CardFooter justifyContent={'space-between'}>
                     <HStack >
-                        <Button isDisabled={page == 0} onClick={() => previousPage()}>
-                            <BsArrowLeft />
-                        </Button>
-                        <Button isDisabled={maxPage == page} onClick={() => nextPage()}>
-                            <BsArrowRight />
-                        </Button>
+                                <Button isDisabled={page == 0} onClick={() => previousPage()}>
+                                    <FaArrowLeft color='var(--chakra-colors-blackAlpha-700)' />
+                                </Button>
+                                <Button isDisabled={maxPage == page || maxPage == 0} onClick={() => nextPage()}>
+                                    <FaArrowRight color='var(--chakra-colors-blackAlpha-700)' />
+                                </Button>
+                                <Text textAlign='center' fontWeight='bold' color='blackAlpha.700' fontSize='sm'>
+                                    {(page + 1) + "/" + (maxPage + 1)}
+                                </Text>
+                    </HStack>
+                    <HStack  >
                         <Text textAlign='center' fontWeight='bold' color='blackAlpha.700' fontSize='sm'>
-                            {(page + 1) + "/" + (maxPage + 1)}
+                            {"Storage free : " + getGo(availableStorage) + " Go ( " + availablePercent + "% )"}
                         </Text>
                     </HStack>
                     <HStack>
-                        <Button ml={3} isLoading={loading} onClick={() => getFiles()}>
-                            <BsArrowCounterclockwise />
+                        <Button ml={3} isLoading={loading} onClick={() => { getFiles(); getStorage() }}>
+                            <FaUndo color='var(--chakra-colors-blackAlpha-700)' />
                         </Button>
                         <Button ml={3} onClick={() => onDisconnect()}>
-                            <BiLogOut />
+                            <FaDoorOpen color='var(--chakra-colors-blackAlpha-700)' />
                         </Button>
                     </HStack>
                 </CardFooter>
