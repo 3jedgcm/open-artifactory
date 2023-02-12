@@ -1,6 +1,6 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Container, Divider, Flex, FormControl, FormLabel, Heading, HStack, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Progress, Spinner, Text, useToast } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
-import { FaArrowLeft, FaArrowRight, FaDoorOpen, FaInfoCircle, FaLink, FaPen, FaSync, FaTrash, FaUndo } from 'react-icons/fa'
+import { Button, Card, CardBody, Divider, Flex, FormControl, FormLabel, HStack, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import { useState } from 'react'
+import { FaInfoCircle, FaLink, FaPen, FaSync, FaTrash } from 'react-icons/fa'
 import moment from 'moment'
 import { FaDownload } from 'react-icons/fa'
 import QRCode from "react-qr-code"
@@ -8,14 +8,11 @@ import QRCode from "react-qr-code"
 const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : ""
 
 const getMb = (size) => (size / 1000000).toFixed(2)
-const getGo = (size) => (size / 1000000000).toFixed(2)
 
 export default function ArtifactItem({ authorization, hash, size, name, url, mimeType = "unknown", uuid, downloadCount, createdAt, onUpdate = () => { } }) {
 
-
     const [edit, setEdit] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [loadingInformation, setLoadingInformation] = useState(false)
     const [information, setInformation] = useState(false)
 
     const toast = useToast()
@@ -179,7 +176,7 @@ export default function ArtifactItem({ authorization, hash, size, name, url, mim
                 <CardBody p={1}>
                     <Flex paddingLeft={1} paddingRight={1} >
                         <HStack flex={4} color='blue.900' alignSelf='center'>
-                            <Text fontSize='md' fontWeight='bold' color='blackAlpha.700' >{name}</Text>
+                            <Text fontSize='md' max fontWeight='bold' color='blackAlpha.700' >{name.slice(0,40)}</Text>
                         </HStack>
                         <HStack display={{ base: 'none', sm: 'none', md: 'initial' }} flex={1} justifyContent='center' alignSelf='center'>
                             <Text fontSize='md' fontWeight='bold' color='blackAlpha.700' >{getMb(size) + " Mo"}</Text>

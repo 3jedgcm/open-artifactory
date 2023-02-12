@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react'
 import ArtifactItem from './ArtifactItem'
 import ArtifactHeader from './ArtifactHeader'
 import Footer from './Footer'
+import UploadFile from './UploadFile'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : ""
 
-
 export default function List({ authorization, onDisconnect }) {
 
+    const [upload, setUpload] = useState(false)
     const [loading, setLoading] = useState(true)
     const [files, setFiles] = useState([])
     const [page, setPage] = useState(0)
@@ -33,6 +34,9 @@ export default function List({ authorization, onDisconnect }) {
             })
             let resultJSON = await result.json()
             if (resultJSON.error) {
+                if(resultJSON.httpCode == 401) {
+                    onDisconnect()
+                }
                 setLoading(false)
                 setFiles([])
                 toast({
@@ -62,7 +66,6 @@ export default function List({ authorization, onDisconnect }) {
         }
     }
 
-    
     const getStorage = async () => {
         try {
             setLoading(true)
@@ -73,6 +76,9 @@ export default function List({ authorization, onDisconnect }) {
             })
             let resultJSON = await result.json()
             if (resultJSON.error) {
+                if(resultJSON.httpCode == 401) {
+                    onDisconnect()
+                }
                 toast({
                     title: resultJSON.httpCode + " " + resultJSON.message,
                     status: 'error',
@@ -95,7 +101,6 @@ export default function List({ authorization, onDisconnect }) {
         setLoading(false)
     }
 
-
     const maxPage = files.length == 0 ? 0 : Math.floor((files.length - 1) / filePerPage)
 
     const nextPage = () => {
@@ -110,14 +115,17 @@ export default function List({ authorization, onDisconnect }) {
         }
     }
 
-
-
-
     const availablePercent = ((availableStorage * 100) / totalStorage).toFixed(2)
-
 
     return (
         <Container maxW={900}  >
+            <UploadFile 
+                upload={upload} 
+                setUpload={(value) => setUpload(value)} 
+                authorization={authorization} 
+                getFiles={() => getFiles()}  
+                getStorage={() => getStorage()} 
+            />
             <Card variant='outline' marginTop={4} marginBottom={4} minHeight={450}  >
                 <CardHeader pb={1}>
                     <Heading size='lg' textAlign={{ base: 'center', sm: 'center', md: 'start' }} fontWeight='bold' color='blackAlpha.700'>Open Artifactory</Heading>
@@ -146,8 +154,8 @@ export default function List({ authorization, onDisconnect }) {
                 <Footer
                     nextPage={() => nextPage()}
                     previousPage={() => previousPage()}
-                    onUpload={() => {}}
-                    onRefresh={() => {getFiles();getStorage()}}
+                    onUpload={() => { setUpload(true) }}
+                    onRefresh={() => { getFiles(); getStorage() }}
                     availableStorage={availableStorage}
                     availablePercent={availablePercent}
                     page={page}
