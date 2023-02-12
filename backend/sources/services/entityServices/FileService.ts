@@ -26,6 +26,9 @@ export default class FileService {
     let queryRunner!: QueryRunner
     try {
       queryRunner = datasource.createQueryRunner()
+      await queryRunner.connect()
+      await queryRunner.startTransaction()
+
       const files = await repository.files.find()
       files.filter((file) => {
         if (!fs.existsSync(file.path)) {
