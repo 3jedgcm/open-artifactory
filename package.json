@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "docker build . -t 3jedgcm/open-artifactory:latest",
+    "build": "docker build . -t 3jedgcm/open-artifactory:0.0.1",
     "setup": "cd backend && yarn install && cd ../frontend && yarn install"
   }
 }
