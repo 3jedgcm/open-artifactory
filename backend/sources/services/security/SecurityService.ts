@@ -1,0 +1,110 @@
+import jwt from 'jsonwebtoken'
+import { authenticator } from '@otplib/preset-default'
+import fs from 'fs'
+import path from 'path'
+import constants from '../../constants'
+import OpenArtifactoryError from '../../model/errors/OpenArtifactoryError'
+
+/**
+ * Service to implement security with One-Time Password and JWT Token
+ */
+export default class SecurityService {
+  /**
+   * One-Time Password secret get from file
+   * @private
+   */
+  private static otpSecret: string
+
+  /**
+   * Checks if otpSecret is set or not
+   * @throws {@link OpenArtifactoryError} if secret is already set
+   */
+  public static verifyOtpSecretStatus(): void {
+    if (this.otpSecret) {
+      throw new OpenArtifactoryError(403, 'Forbidden')
+    }
+  }
+
+  /**
+   * Create a new One-Time Password secret
+   * @return Otp secret and Otp url
+   */
+  public static createOtpSecret(): { otpSecret: string, otpUrl: string } {
+    const otpSecret = authenticator.generateSecret()
+    const otpUrl = authenticator.keyuri('admin', constants.otpServiceName, otpSecret)
+    return {
+      otpSecret,
+      otpUrl
+    }
+  }
+
+  public static saveOtpSecret(otpSecret: string) {
+    this.otpSecret = otpSecret
+
+    const folderPath = path.dirname(constants.otpFilePath)
+    if (!fs.existsSync(folderPath) || !fs.lstatSync(folderPath)
+      .isDirectory()) {
+      fs.mkdirSync(folderPath, { recursive: true })
+    }
+
+    fs.writeFileSync(constants.otpFilePath, this.otpSecret, { flag: 'w' })
+  }
+
+  /**
+   * Initializes One-Time Password secret status
+   * Read OTP file and store token is exists
+   */
+  public static initializeOtp(): void {
+    if (fs.existsSync(constants.otpFilePath)) {
+      const fileValue = fs.readFileSync(constants.otpFilePath)
+        .toString()
+      if (fileValue && fileValue.trim().length > 0) {
+        this.otpSecret = fileValue.trim()
+      }
+    }
+  }
+
+  /**
+   * Checks if OtpToken is right
+   * @param otpToken One-Time Password token to check
+   * @param otpSecret One-Time Password secret to check (optional, if not set, take instance one)
+   * @throws {@link OpenArtifactoryError} if invalid authentication
+   */
+  public static verifyOtpToken(otpToken: string, otpSecret?: string): void {
+    if (!authenticator.verify({
+      token: otpToken,
+      secret: otpSecret ?? this.otpSecret
+    })) {
+      throw new OpenArtifactoryError(401, 'Unauthorized')
+    }
+  }
+
+  /**
+   * Generates a JSON Web Token
+   * @return JSON web token and expiration date
+   */
+  public static generateJwtToken(): { jwtToken: string, expireAt: Date } {
+    const jwtToken = jwt.sign({}, constants.jwtSecret, { expiresIn: constants.jwtExpirationTime })
+    const jwtPayload = jwt.decode(jwtToken) as { exp: number }
+    return {
+      jwtToken,
+      expireAt: new Date(jwtPayload.exp * 1000)
+    }
+  }
+
+  /**
+   * Checks if JSON Web Token is right
+   * @param jwtToken token to check
+   * @throws {@link OpenArtifactoryError} if invalid authentication
+   */
+  public static verifyJwtToken(jwtToken: string): void {
+    try {
+      jwt.verify(jwtToken, constants.jwtSecret, {
+        ignoreNotBefore: false,
+        ignoreExpiration: false
+      })
+    } catch {
+      throw new OpenArtifactoryError(401, 'Unauthorized')
+    }
+  }
+}

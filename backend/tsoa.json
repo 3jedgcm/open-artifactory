@@ -1,0 +1,27 @@
+{
+  "entryFile": "sources/api/router.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": [
+    "sources/api/controllers/*Controller.ts"
+  ],
+  "spec": {
+    "outputDirectory": "generated",
+    "specVersion": 3,
+    "securityDefinitions": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Use /login endpoint to get bearer token"
+      }
+    },
+    "schemes": [
+      "http"
+    ],
+    "host": "localhost:5000"
+  },
+  "routes": {
+    "routesDir": "sources/tsoa",
+    "authenticationModule": "sources/api/middlewares/tsoaAuthenticationMiddleware.ts"
+  }
+}

@@ -1,15 +1,34 @@
-FROM node as builder
-
+FROM node:alpine as backend
 WORKDIR /usr/src/app
-COPY package.json yarn.lock ./
+RUN apk add g++ make python3
+COPY ./backend/sources ./sources
+COPY ./backend/package.json ./
+COPY ./backend/yarn.lock ./
+COPY ./backend/tsconfig.json ./
+COPY ./backend/tsoa.json ./
 RUN yarn install --frozen-lockfile
-COPY . .
 RUN yarn build
 
-FROM node:alpine
+FROM node:alpine as frontend
 WORKDIR /usr/src/app
-COPY package.json yarn.lock ./
-RUN yarn install --production --frozen-lockfile
-COPY --from=builder /usr/src/app/builds ./builds
-EXPOSE 8080
-CMD [ "node", "builds/index.js" ]
+COPY ./frontend/src ./src
+COPY ./frontend/public ./public
+COPY ./frontend/package.json ./
+COPY ./frontend/yarn.lock ./
+RUN yarn install --frozen-lockfile
+RUN yarn build
+
+FROM node:alpine as container
+ENV FILES_PATH="/usr/src/app/data/files"
+ENV DATABASE_PATH="/usr/src/app/data/open-artifactory.db"
+ENV OTP_SECRET_PATH="/usr/src/app/data/open-artifactory.otp.secret"
+WORKDIR /usr/src/app
+RUN apk add g++ make python3
+COPY --from=backend /usr/src/app/builds ./
+COPY --from=frontend /usr/src/app/builds ./public
+COPY ./backend/package.json ./
+COPY ./backend/yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+EXPOSE 5000
+ENTRYPOINT [ "node", "index.js" ]
