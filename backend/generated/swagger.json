@@ -268,6 +268,46 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"OtpInitHttpResponse": {
+				"description": "One-Time Password initialization http response",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"otpSecret": {
+						"type": "string",
+						"description": "One-Time Password secret",
+						"example": "PILQOGK4OBLTUQKI"
+					},
+					"otpUrl": {
+						"type": "string",
+						"description": "One-Time Password link",
+						"example": "otpauth://totp/open-artifactory:admin?secret=PILQOGK4OBLTUQKI&period=30&digits=6&algorithm=SHA1&issuer=open-artifactory"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"otpSecret",
+					"otpUrl"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"BearerHttpResponse": {
 				"description": "Bearer response",
 				"properties": {
@@ -289,7 +329,7 @@
 					},
 					"jwtToken": {
 						"type": "string",
-						"description": "JSON Web Token\r\n// eslint-disable-next-line max-len",
+						"description": "JSON Web Token\n// eslint-disable-next-line max-len",
 						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 					},
 					"expireAt": {
@@ -309,8 +349,30 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"OtpHttpEntity": {
-				"description": "One-Time Password entity model",
+			"OtpInitHttpEntity": {
+				"description": "One-Time Password initialization entity model",
+				"properties": {
+					"otpToken": {
+						"type": "string",
+						"description": "One-Time Password token to login",
+						"example": "1234546",
+						"pattern": "[0-9]{6}"
+					},
+					"otpSecret": {
+						"type": "string",
+						"description": "One-Time Password secret to save",
+						"example": "PILQOGK4OBLTUQKI"
+					}
+				},
+				"required": [
+					"otpToken",
+					"otpSecret"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OtpLoginHttpEntity": {
+				"description": "One-Time Password login entity model",
 				"properties": {
 					"otpToken": {
 						"type": "string",
@@ -1127,6 +1189,212 @@
 				]
 			}
 		},
+		"/init": {
+			"get": {
+				"operationId": "GetOtpSecret",
+				"responses": {
+					"200": {
+						"description": "One-Time Password secret",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OtpInitHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "New OTP secret generated: PILQOGK4OBLTUQKI",
+											"otpSecret": "PILQOGK4OBLTUQKI",
+											"otpUrl": "otpauth://totp/open-artifactory:admin?secret=PILQOGK4OBLTUQKI&period=30&digits=6&algorithm=SHA1&issuer=open-artifactory"
+										}
+									}
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 403,
+											"message": "Forbidden",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Generates a new One-Time Password secret\nReturn a 403 error if OTP secret is already set",
+				"summary": "Get initialization data",
+				"tags": [
+					"Init"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveOtpSecret",
+				"responses": {
+					"200": {
+						"description": "Bearer token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BearerHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "One-Time Password secret successfully saved",
+											"jwtToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+											"expireAt": "2023-01-01T00:00:00.000Z"
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 403,
+											"message": "Forbidden",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Saves OTP configuration\nReturns a 403 error if OTP secret is already set\nReturns a 401 error if OTP token doesn\"t match with OTP secret",
+				"summary": "Save initialization data",
+				"tags": [
+					"Init"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "One-Time Password settings",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/OtpInitHttpEntity",
+								"description": "One-Time Password settings"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/login": {
 			"post": {
 				"operationId": "Login",
@@ -1227,11 +1495,13 @@
 				"security": [],
 				"parameters": [],
 				"requestBody": {
+					"description": "otp token",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/OtpHttpEntity"
+								"$ref": "#/components/schemas/OtpLoginHttpEntity",
+								"description": "otp token"
 							}
 						}
 					}

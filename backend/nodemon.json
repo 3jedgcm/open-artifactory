@@ -1,0 +1,14 @@
+{
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "node_modules",
+    "sources/tsoa/**"
+  ],
+  "watch": [
+    "sources",
+    "tsoa.json"
+  ],
+  "exec": "yarn run dev-start",
+  "ext": "ts"
+}

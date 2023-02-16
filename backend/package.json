@@ -9,8 +9,9 @@
   },
   "scripts": {
     "build": "tsoa spec-and-routes && npx tsc",
-    "start": "cd build && node sources/index.js",
-    "dev": "tsoa spec-and-routes && npx tsc && cd build && node sources/index.js"
+    "start": "cd builds && node index.js",
+    "dev-start": "tsoa spec-and-routes && npx tsc && cd builds && node index.js",
+    "dev": "nodemon"
   },
   "author": "https://github.com/3jedgcm/open-artifactory#author",
   "license": "ISC",
@@ -29,7 +30,6 @@
     "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.5-lts.1",
     "otplib": "^12.0.1",
-    "qrcode-terminal": "^0.12.0",
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^5.1.4",
     "tsoa": "^5.1.1",
@@ -48,6 +48,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-plugin-import": "^2.25.2",
+    "nodemon": "^2.0.20",
     "typescript": "^4.9.4"
   }
 }

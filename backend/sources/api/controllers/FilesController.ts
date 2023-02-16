@@ -66,7 +66,7 @@ export class FilesController extends Controller {
   })
   @Security('bearer')
   @Get()
-  async getList(): Promise<FilesHttpResponse> {
+  public async getList(): Promise<FilesHttpResponse> {
     const files = mapper.mapArray(await FileService.getList(), File, FileHttpEntity)
     return {
       httpCode: 200,
@@ -96,7 +96,7 @@ export class FilesController extends Controller {
   })
   @Security('bearer')
   @Get('storage')
-  async getStorage(): Promise<StorageHttpResponse> {
+  public async getStorage(): Promise<StorageHttpResponse> {
     const storageData = await FileService.getStorageData()
     const percentage = ((storageData.availableSpace / storageData.totalSpace) * 100).toFixed(2)
 
@@ -120,7 +120,7 @@ export class FilesController extends Controller {
     error: true
   })
   @Get('{uuid}')
-  async download(@Path() uuid: Uuid): Promise<ReadStream> {
+  public async download(@Path() uuid: Uuid): Promise<ReadStream> {
     const file = await FileService.get(uuid, true)
 
     this.setHeader('Content-Type', file.mimeType)
@@ -153,7 +153,7 @@ export class FilesController extends Controller {
   })
   @Security('bearer')
   @Post('{uuid}/change-uuid')
-  async changeUuid(@Path() uuid: Uuid): Promise<FileHttpResponse> {
+  public async changeUuid(@Path() uuid: Uuid): Promise<FileHttpResponse> {
     const file = mapper.map(await FileService.changeUuid(uuid), File, FileHttpEntity)
 
     return {
@@ -189,7 +189,7 @@ export class FilesController extends Controller {
   })
   @Security('bearer')
   @Put('{uuid}')
-  async update(@Path() uuid: Uuid, @Body() body: FileUpdateHttpEntity)
+  public async update(@Path() uuid: Uuid, @Body() body: FileUpdateHttpEntity)
     : Promise<FileHttpResponse> {
     const updatedFile = mapper.map(body, FileUpdateHttpEntity, File)
 
@@ -227,7 +227,7 @@ export class FilesController extends Controller {
   })
   @Security('bearer')
   @Delete('{uuid}')
-  async delete(@Path() uuid: Uuid): Promise<FileHttpResponse> {
+  public async delete(@Path() uuid: Uuid): Promise<FileHttpResponse> {
     const file = mapper.map(await FileService.delete(uuid), File, FileHttpEntity)
 
     return {

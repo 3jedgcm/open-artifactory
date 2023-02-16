@@ -22,7 +22,7 @@ export default class FileService {
    * Remove deleted files for list before return
    * @return {@link File}[] File entity array
    */
-  static async getList(): Promise<File[]> {
+  public static async getList(): Promise<File[]> {
     let queryRunner!: QueryRunner
     try {
       queryRunner = datasource.createQueryRunner()
@@ -55,7 +55,7 @@ export default class FileService {
    * @return {@link File} selected file entity
    * @throws {@link OpenArtifactoryError} if uuid does not exist in database
    */
-  static async get(uuid: Uuid, incrementDownloadCount = false): Promise<File> {
+  public static async get(uuid: Uuid, incrementDownloadCount = false): Promise<File> {
     const fileEntity = await repository.files.findOneBy({ uuid })
 
     if (fileEntity) {
@@ -81,7 +81,7 @@ export default class FileService {
    * @return {@link File} uploaded file entity
    * @throws {@link OpenArtifactoryError} if an error occur during upload
    */
-  static async upload(uploadedFile: Express.Multer.File, name?: string): Promise<File> {
+  public static async upload(uploadedFile: Express.Multer.File, name?: string): Promise<File> {
     let fileEntity: File
     let queryRunner!: QueryRunner
 
@@ -134,7 +134,7 @@ export default class FileService {
    * @return {@link File} updated file entity
    * @throws {@link OpenArtifactoryError} if an error occur
    */
-  static async changeUuid(uuid: Uuid): Promise<File> {
+  public static async changeUuid(uuid: Uuid): Promise<File> {
     let fileEntity = await this.get(uuid)
     let queryRunner!: QueryRunner
 
@@ -170,7 +170,7 @@ export default class FileService {
    * @return {@link File} deleted file entity
    * @throws {@link OpenArtifactoryError} if uuid does not exist in database
    */
-  static async delete(uuid: Uuid): Promise<File> {
+  public static async delete(uuid: Uuid): Promise<File> {
     const fileEntity = await this.get(uuid)
 
     if (fs.existsSync(fileEntity.path)) {
@@ -188,7 +188,7 @@ export default class FileService {
    * @return {@link File} Updated file entity
    * @throws {@link OpenArtifactoryError} if uuid does not exist in database
    */
-  static async update(uuid: string, updatedFile: File): Promise<File> {
+  public static async update(uuid: string, updatedFile: File): Promise<File> {
     let fileEntity = await this.get(uuid)
 
     fileEntity.name = updatedFile.name
@@ -201,7 +201,7 @@ export default class FileService {
    * Computes storage sizes and return values
    * @return {@link StorageHttpEntity} with disk data
    */
-  static async getStorageData(): Promise<StorageHttpEntity> {
+  public static async getStorageData(): Promise<StorageHttpEntity> {
     const storagePath = path.resolve(constants.filesFolderPath)
 
     if (!fs.existsSync(storagePath) || !fs.lstatSync(storagePath)

@@ -1,7 +1,7 @@
 import {
   Body, Example, Post, Response, Route, SuccessResponse, Tags
 } from 'tsoa'
-import OtpHttpEntity from '../../model/httpEntites/OtpHttpEntity'
+import OtpLoginHttpEntity from '../../model/httpEntites/OtpLoginHttpEntity'
 import SecurityService from '../../services/security/SecurityService'
 import BearerHttpResponse from '../../model/httpResponses/BearerTokenHttpResponse'
 import ErrorHttpResponse from '../../model/httpResponses/ErrorResponse'
@@ -18,7 +18,7 @@ export class LoginController {
   /**
    * Generates a JWT token from One-Time Password token
    * @summary Login into Open-artifactory
-   * @param otpEntity
+   * @param otpEntity otp token
    */
   @SuccessResponse(200, 'Bearer token')
   @Example<BearerHttpResponse>({
@@ -45,7 +45,7 @@ export class LoginController {
     error: true
   })
   @Post()
-  async login(@Body() otpEntity: OtpHttpEntity): Promise<BearerHttpResponse> {
+  public async login(@Body() otpEntity: OtpLoginHttpEntity): Promise<BearerHttpResponse> {
     SecurityService.verifyOtpToken(otpEntity.otpToken)
 
     const {

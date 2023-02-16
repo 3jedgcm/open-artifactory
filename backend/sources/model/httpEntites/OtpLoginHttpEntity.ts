@@ -1,7 +1,7 @@
 /**
- * One-Time Password entity model
+ * One-Time Password login entity model
  */
-export default class OtpHttpEntity {
+export default class OtpLoginHttpEntity {
   /**
    * One-Time Password token to login
    * @pattern [0-9]{6}
