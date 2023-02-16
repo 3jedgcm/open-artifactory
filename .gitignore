@@ -105,5 +105,6 @@ builds
 
 .idea/
 build/
+data/
 /backend/generated/tsoa/
 backend/sources/tsoa/routes.ts

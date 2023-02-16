@@ -61,7 +61,7 @@ export class UploadController extends Controller {
   })
   @Security('bearer')
   @Post()
-  async upload(@UploadedFile() file: Express.Multer.File, @FormField() name?: FileName)
+  public async upload(@UploadedFile() file: Express.Multer.File, @FormField() name?: FileName)
     : Promise<FileHttpResponse> {
     let fileName: string | undefined
     if (name && name.trim().length > 0) {
