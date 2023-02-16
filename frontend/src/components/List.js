@@ -146,7 +146,7 @@ export default function List({ authorization, onDisconnect }) {
                     {
                         files.slice(filePerPage * page, filePerPage * (page + 1)).map((file, index) => {
                             return (
-                                <ArtifactItem authorization={authorization} hash={file.hash} mimeType={file.mimeType} size={file.size} key={index} uuid={file.uuid} createdAt={file.createdAt} onUpdate={() => { getFiles(); getStorage() }} downloadCount={file.downloadCount} name={file.name} url={file.url} />
+                                <ArtifactItem comment={file.comment} authorization={authorization} hash={file.hash} mimeType={file.mimeType} size={file.size} key={index} uuid={file.uuid} createdAt={file.createdAt} onUpdate={() => { getFiles(); getStorage() }} downloadCount={file.downloadCount} name={file.name} url={file.url} />
                             )
                         })
                     }

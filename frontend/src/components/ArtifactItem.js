@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Divider, Flex, FormControl, FormLabel, HStack, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import { Button, Card, CardBody, Divider, Flex, FormControl, FormLabel, HStack, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, VStack, useToast } from '@chakra-ui/react'
 import { useState } from 'react'
 import { FaInfoCircle, FaLink, FaPen, FaSync, FaTrash } from 'react-icons/fa'
 import moment from 'moment'
@@ -9,7 +9,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL
 
 const getMb = (size) => (size / 1000000).toFixed(2)
 
-export default function ArtifactItem({ authorization, hash, size, name, url, mimeType = "unknown", uuid, downloadCount, createdAt, onUpdate = () => { } }) {
+export default function ArtifactItem({ comment, authorization, hash, size, name, url, mimeType = "unknown", uuid, downloadCount, createdAt, onUpdate = () => { } }) {
 
     const [edit, setEdit] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -43,7 +43,7 @@ export default function ArtifactItem({ authorization, hash, size, name, url, mim
         setLoading(false)
     }
 
-    const editName = async (name) => {
+    const editName = async (pName) => {
         let result = await fetch(BASE_URL + "/files/" + uuid, {
             headers: {
                 'Accept': 'application/json',
@@ -52,6 +52,35 @@ export default function ArtifactItem({ authorization, hash, size, name, url, mim
             },
             method: 'PUT',
             body: JSON.stringify({
+                name: pName,
+                comment: comment
+            })
+        })
+        let resultJSON = await result.json()
+        if (resultJSON.error) {
+            toast({
+                title: resultJSON.httpCode + " " + resultJSON.message,
+                description: "Please retry later",
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+            })
+        } else {
+            onUpdate()
+        }
+    }
+
+
+    const editComment = async (pComment) => {
+        let result = await fetch(BASE_URL + "/files/" + uuid, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: "Bearer " + authorization
+            },
+            method: 'PUT',
+            body: JSON.stringify({
+                comment: pComment,
                 name: name
             })
         })
@@ -134,8 +163,9 @@ export default function ArtifactItem({ authorization, hash, size, name, url, mim
                         <Text fontSize='md' color='blackAlpha.700' >{"Download time : " + downloadCount}</Text>
                         <Text fontSize='md' color='blackAlpha.700' >{"Size : " + getMb(size) + " Mo"}</Text>
                         <Divider marginTop={2} marginBottom={2} />
+                        <Text fontSize='md' mb={4} color='blackAlpha.700' >{comment}</Text>
                     </ModalBody>
-                    <ModalFooter justifyContent='center' mb={4}>
+                    <ModalFooter mb={4} justifyContent='center'>
                         <QRCode cursor='pointer' onClick={() => copyLink()} value={url} size={164} />
                     </ModalFooter>
                 </ModalContent>
@@ -164,6 +194,12 @@ export default function ArtifactItem({ authorization, hash, size, name, url, mim
                                 <Input borderWidth={2} fontWeight='bold' color='blackAlpha.800' errorBorderColor='red.500' defaultValue={name} onChange={(event) => { editName(event.currentTarget.value) }} />
                             </HStack>
                         </FormControl>
+                        <FormControl mt={2} >
+                            <FormLabel fontWeight='bold' color='blackAlpha.700'>Comment</FormLabel>
+                            <HStack>
+                                <Input borderWidth={2} fontWeight='bold' color='blackAlpha.800' errorBorderColor='red.500' defaultValue={comment} onChange={(event) => { editComment(event.currentTarget.value) }} />
+                            </HStack>
+                        </FormControl>
                     </ModalBody>
                     <ModalFooter>
                         <Button ml={2} size='sm' onClick={() => deleteFile()} _hover={{ backgroundColor: 'red.700' }} backgroundColor='red.500' color='white'>
@@ -176,7 +212,7 @@ export default function ArtifactItem({ authorization, hash, size, name, url, mim
                 <CardBody p={1}>
                     <Flex paddingLeft={1} paddingRight={1} >
                         <HStack flex={4} color='blue.900' alignSelf='center'>
-                            <Text fontSize='md' max fontWeight='bold' color='blackAlpha.700' >{name.slice(0,40)}</Text>
+                            <Text fontSize='md' max fontWeight='bold' color='blackAlpha.700' >{name.slice(0, 40)}</Text>
                         </HStack>
                         <HStack display={{ base: 'none', sm: 'none', md: 'initial' }} flex={1} justifyContent='center' alignSelf='center'>
                             <Text fontSize='md' fontWeight='bold' color='blackAlpha.700' >{getMb(size) + " Mo"}</Text>
