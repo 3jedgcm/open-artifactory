@@ -56,6 +56,12 @@
 						"description": "File name",
 						"example": "picture.jpg"
 					},
+					"comment": {
+						"type": "string",
+						"nullable": true,
+						"description": "File comment",
+						"example": "This is a comment"
+					},
 					"mimeType": {
 						"type": "string",
 						"description": "File mime type",
@@ -93,6 +99,7 @@
 				"required": [
 					"uuid",
 					"name",
+					"comment",
 					"mimeType",
 					"size",
 					"hash",
@@ -260,6 +267,12 @@
 						"description": "New file name",
 						"example": "picture.jpg",
 						"pattern": "[\\S\\s]+[\\S]+"
+					},
+					"comment": {
+						"type": "string",
+						"nullable": true,
+						"description": "New file comment (optional)",
+						"example": "This is a comment"
 					}
 				},
 				"required": [
@@ -432,6 +445,7 @@
 												{
 													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
 													"name": "picture.jpg",
+													"comment": "This is a comment",
 													"mimeType": "image/jpeg",
 													"size": 10578,
 													"hash": "7f4fd6614997f869edf8578d81ceba9f",
@@ -442,6 +456,7 @@
 												{
 													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
 													"name": "picture.jpg",
+													"comment": "This is a comment",
 													"mimeType": "image/jpeg",
 													"size": 10578,
 													"hash": "7f4fd6614997f869edf8578d81ceba9f",
@@ -452,6 +467,7 @@
 												{
 													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
 													"name": "picture.jpg",
+													"comment": "This is a comment",
 													"mimeType": "image/jpeg",
 													"size": 10578,
 													"hash": "7f4fd6614997f869edf8578d81ceba9f",
@@ -773,6 +789,7 @@
 											"file": {
 												"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
 												"name": "picture.jpg",
+												"comment": "This is a comment",
 												"mimeType": "image/jpeg",
 												"size": 10578,
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
@@ -925,6 +942,7 @@
 											"file": {
 												"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
 												"name": "picture.jpg",
+												"comment": "This is a comment",
 												"mimeType": "image/jpeg",
 												"size": 10578,
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
@@ -1067,6 +1085,7 @@
 											"file": {
 												"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
 												"name": "picture.jpg",
+												"comment": "This is a comment",
 												"mimeType": "image/jpeg",
 												"size": 10578,
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
@@ -1528,6 +1547,7 @@
 											"file": {
 												"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
 												"name": "picture.jpg",
+												"comment": "This is a comment",
 												"mimeType": "image/jpeg",
 												"size": 10578,
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
@@ -1634,6 +1654,10 @@
 									"name": {
 										"type": "string",
 										"description": "optional file name"
+									},
+									"comment": {
+										"type": "string",
+										"description": "optional file comment"
 									}
 								},
 								"required": [

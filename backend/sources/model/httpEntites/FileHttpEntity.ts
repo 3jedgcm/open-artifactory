@@ -19,6 +19,12 @@ export default class FileHttpEntity {
     name!: string
 
   /**
+   * File comment
+   * @example "This is a comment"
+   */
+  comment!: string | null
+
+  /**
    * File mime type
    * @example "image/jpeg"
    */

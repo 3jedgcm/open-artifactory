@@ -33,6 +33,7 @@ export class UploadController extends Controller {
    * @summary Uploads file
    * @param file file to upload
    * @param name optional file name
+   * @param comment optional file comment
    */
   @SuccessResponse(201, 'Created file entity')
   @Example<FileHttpResponse>(
@@ -61,14 +62,22 @@ export class UploadController extends Controller {
   })
   @Security('bearer')
   @Post()
-  public async upload(@UploadedFile() file: Express.Multer.File, @FormField() name?: FileName)
-    : Promise<FileHttpResponse> {
+  public async upload(
+    @UploadedFile() file: Express.Multer.File,
+      @FormField() name?: FileName,
+      @FormField() comment?: FileName
+  )
+      : Promise<FileHttpResponse> {
     let fileName: string | undefined
     if (name && name.trim().length > 0) {
       fileName = name
     }
 
-    const fileEntity = mapper.map(await FileService.upload(file, fileName), File, FileHttpEntity)
+    const fileEntity = mapper.map(
+      await FileService.upload(file, fileName, comment),
+      File,
+      FileHttpEntity
+    )
 
     return {
       httpCode: 201,

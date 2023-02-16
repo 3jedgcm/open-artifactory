@@ -19,11 +19,19 @@ createMap(
   mapper,
   File,
   FileHttpEntity,
-  forMember((destination) => destination.url, mapFrom((source) => source.url))
+  forMember((destination) => destination.url, mapFrom((source) => source.url)),
+  forMember((destination) => destination.comment, mapFrom((source) => source.comment))
 )
 /**
  * Map to transform {@link FileUpdateHttpEntity} into {@link File}
  */
-createMap(mapper, FileUpdateHttpEntity, File)
+createMap(
+  mapper,
+  FileUpdateHttpEntity,
+  File,
+  forMember((destination) => destination.comment, mapFrom(
+    (source) => (source.comment && source.comment.trim() ? source.comment : null)
+  ))
+)
 
 export default mapper
