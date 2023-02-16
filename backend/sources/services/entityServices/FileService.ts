@@ -78,10 +78,15 @@ export default class FileService {
    * Creates new file entity and uploads file
    * @param uploadedFile Multer file to upload
    * @param name optional file name, if not set, original name is used
+   * @param comment optional file comment
    * @return {@link File} uploaded file entity
    * @throws {@link OpenArtifactoryError} if an error occur during upload
    */
-  public static async upload(uploadedFile: Express.Multer.File, name?: string): Promise<File> {
+  public static async upload(
+    uploadedFile: Express.Multer.File,
+    name?: string,
+    comment?: string
+  ): Promise<File> {
     let fileEntity: File
     let queryRunner!: QueryRunner
 
@@ -100,6 +105,7 @@ export default class FileService {
         .digest('hex')
 
       fileEntity.name = name ?? uploadedFile.originalname
+      fileEntity.comment = comment && comment.trim().length > 0 ? comment : null
 
       queryRunner = datasource.createQueryRunner()
       await queryRunner.connect()
@@ -192,6 +198,8 @@ export default class FileService {
     let fileEntity = await this.get(uuid)
 
     fileEntity.name = updatedFile.name
+    fileEntity.comment = updatedFile.comment
+
     fileEntity = await repository.files.save(fileEntity)
 
     return fileEntity
@@ -212,9 +220,7 @@ export default class FileService {
     const pathUsage = await check(storagePath)
     const usedSpace = fastFolderSizeSync(storagePath)
 
-    console.log(constants.storageLimit)
-
-    if (usedSpace) {
+    if (usedSpace || usedSpace === 0) {
       const totalSpace = constants.storageLimit > 0
         ? Math.min(constants.storageLimit, pathUsage.available + usedSpace)
         : pathUsage.available + usedSpace

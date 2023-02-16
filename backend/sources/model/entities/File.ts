@@ -33,6 +33,22 @@ export default class File {
     name!: string
 
   /**
+   * File comment
+   */
+  @Column({
+    type: 'text',
+    transformer: {
+      to(value) {
+        return value || ''
+      },
+      from(value) {
+        return value || null
+      }
+    }
+  })
+    comment!: string | null
+
+  /**
    * Mime type
    */
   @Column('text')

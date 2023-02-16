@@ -11,4 +11,10 @@ export default class FileUpdateHttpEntity {
    */
   @AutoMap()
     name!: string
+
+  /**
+   * New file comment (optional)
+   * @example "This is a comment"
+   */
+  comment?: string | null
 }

@@ -7,6 +7,7 @@ import StorageHttpEntity from '../../model/httpEntites/StorageHttpEntity'
 export const fileExample: FileHttpEntity = {
   uuid: '146fb209-af3b-4c67-863a-a98b641c95e5',
   name: 'picture.jpg',
+  comment: 'This is a comment',
   mimeType: 'image/jpeg',
   size: 10578,
   hash: '7f4fd6614997f869edf8578d81ceba9f',
