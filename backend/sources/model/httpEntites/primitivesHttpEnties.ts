@@ -10,3 +10,10 @@ export type Uuid = string
  * @example "picture.jpg"
  */
 export type FileName = string
+
+/**
+ * Id
+ * @isInt Id must be an integer
+ * @example 1
+ */
+export type Id = number

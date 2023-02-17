@@ -57,7 +57,7 @@ export class LoginController {
       error: false,
       message: 'Successfully logged in',
       jwtToken,
-      expireAt
+      expireAt: expireAt!
     }
   }
 }

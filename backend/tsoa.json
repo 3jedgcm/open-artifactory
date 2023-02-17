@@ -12,7 +12,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Use /login endpoint to get bearer token"
+        "description": "Use /login endpoint to get bearer token or use an API token"
       }
     },
     "schemes": [

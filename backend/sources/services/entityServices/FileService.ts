@@ -183,26 +183,22 @@ export default class FileService {
       fs.unlinkSync(fileEntity.path)
     }
 
-    await repository.files.remove(fileEntity)
-    return fileEntity
+    return repository.files.remove(fileEntity)
   }
 
   /**
    * Updates file entity
-   * @param uuid Updated file uuid
    * @param updatedFile new file data to set
    * @return {@link File} Updated file entity
    * @throws {@link OpenArtifactoryError} if uuid does not exist in database
    */
-  public static async update(uuid: string, updatedFile: File): Promise<File> {
-    let fileEntity = await this.get(uuid)
+  public static async update(updatedFile: File): Promise<File> {
+    const fileEntity = await this.get(updatedFile.uuid)
 
     fileEntity.name = updatedFile.name
     fileEntity.comment = updatedFile.comment
 
-    fileEntity = await repository.files.save(fileEntity)
-
-    return fileEntity
+    return repository.files.save(fileEntity)
   }
 
   /**

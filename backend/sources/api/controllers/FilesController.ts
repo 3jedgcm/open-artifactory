@@ -4,6 +4,7 @@ import {
   Delete,
   Example,
   Get,
+  NoSecurity,
   Path,
   Post,
   Put,
@@ -18,10 +19,10 @@ import { ReadStream } from 'typeorm/browser/platform/BrowserPlatformTools'
 import mapper from '../../services/mapper'
 import FileService from '../../services/entityServices/FileService'
 import File from '../../model/entities/File'
-import FileHttpEntity from '../../model/httpEntites/FileHttpEntity'
-import FileHttpResponse from '../../model/httpResponses/FileHttpResponse'
-import FilesHttpResponse from '../../model/httpResponses/FilesHttpRepsonse'
-import FileUpdateHttpEntity from '../../model/httpEntites/FileUpdateHttpEntity'
+import FileHttpEntity from '../../model/httpEntites/file/FileHttpEntity'
+import FileHttpResponse from '../../model/httpResponses/file/FileHttpResponse'
+import FilesHttpResponse from '../../model/httpResponses/file/FilesHttpRepsonse'
+import FileUpdateHttpEntity from '../../model/httpEntites/file/FileUpdateHttpEntity'
 import { Uuid } from '../../model/httpEntites/primitivesHttpEnties'
 import ErrorHttpResponse from '../../model/httpResponses/ErrorResponse'
 import { fileExample, storageExample } from '../openApiExamples'
@@ -33,17 +34,7 @@ import StorageHttpResponse from '../../model/httpResponses/StorageHttpResponse'
   error: true,
   details: { message: 'Sample error' }
 })
-@Response<ErrorHttpResponse>(422, 'Validation failed error', {
-  httpCode: 422,
-  message: 'Validation failed',
-  error: true,
-  details: {
-    field: {
-      message: 'Validation message',
-      value: 'Bad value'
-    }
-  }
-})
+@Security('bearer')
 @Tags('Files')
 @Route('files')
 export class FilesController extends Controller {
@@ -64,7 +55,6 @@ export class FilesController extends Controller {
     message: 'Unauthorized',
     error: true
   })
-  @Security('bearer')
   @Get()
   public async getList(): Promise<FilesHttpResponse> {
     const files = mapper.mapArray(await FileService.getList(), File, FileHttpEntity)
@@ -94,7 +84,6 @@ export class FilesController extends Controller {
     message: 'Disk space available : 3221225472 bytes (60.00 %)',
     storageData: storageExample
   })
-  @Security('bearer')
   @Get('storage')
   public async getStorage(): Promise<StorageHttpResponse> {
     const storageData = await FileService.getStorageData()
@@ -119,6 +108,7 @@ export class FilesController extends Controller {
     message: '4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found',
     error: true
   })
+  @NoSecurity()
   @Get('{uuid}')
   public async download(@Path() uuid: Uuid): Promise<ReadStream> {
     const file = await FileService.get(uuid, true)
@@ -151,7 +141,6 @@ export class FilesController extends Controller {
     message: 'Unauthorized',
     error: true
   })
-  @Security('bearer')
   @Post('{uuid}/change-uuid')
   public async changeUuid(@Path() uuid: Uuid): Promise<FileHttpResponse> {
     const file = mapper.map(await FileService.changeUuid(uuid), File, FileHttpEntity)
@@ -182,18 +171,29 @@ export class FilesController extends Controller {
     message: '4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found',
     error: true
   })
+  @Response<ErrorHttpResponse>(422, 'Validation failed error', {
+    httpCode: 422,
+    message: 'Validation failed',
+    error: true,
+    details: {
+      field: {
+        message: 'Validation message',
+        value: 'Bad value'
+      }
+    }
+  })
   @Response<ErrorHttpResponse>(401, 'Unauthorized', {
     httpCode: 401,
     message: 'Unauthorized',
     error: true
   })
-  @Security('bearer')
   @Put('{uuid}')
   public async update(@Path() uuid: Uuid, @Body() body: FileUpdateHttpEntity)
     : Promise<FileHttpResponse> {
     const updatedFile = mapper.map(body, FileUpdateHttpEntity, File)
+    updatedFile.uuid = uuid
 
-    const file = mapper.map(await FileService.update(uuid, updatedFile), File, FileHttpEntity)
+    const file = mapper.map(await FileService.update(updatedFile), File, FileHttpEntity)
 
     return {
       httpCode: 200,
@@ -225,7 +225,6 @@ export class FilesController extends Controller {
     message: 'Unauthorized',
     error: true
   })
-  @Security('bearer')
   @Delete('{uuid}')
   public async delete(@Path() uuid: Uuid): Promise<FileHttpResponse> {
     const file = mapper.map(await FileService.delete(uuid), File, FileHttpEntity)

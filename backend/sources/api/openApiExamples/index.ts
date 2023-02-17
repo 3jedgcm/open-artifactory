@@ -1,5 +1,6 @@
-import FileHttpEntity from '../../model/httpEntites/FileHttpEntity'
+import FileHttpEntity from '../../model/httpEntites/file/FileHttpEntity'
 import StorageHttpEntity from '../../model/httpEntites/StorageHttpEntity'
+import ApiTokenHttpEntity from '../../model/httpEntites/apiToken/ApiTokenEntity'
 
 /**
  * File sample for Open API generation with tsoa
@@ -21,4 +22,13 @@ export const storageExample: StorageHttpEntity = {
   usedSpace: 2147483648,
   availableSpace: 3221225472,
   storagePath: '/open-artifactory/data/files'
+}
+
+export const apiTokenExample: ApiTokenHttpEntity = {
+  id: 1,
+  name: 'API key for CI',
+  comment: 'This is a comment',
+  expireAt: new Date('2023-01-01T00:00:00.000Z'),
+  isValid: true,
+  createdAt: new Date('2023-01-01T00:00:00.000Z')
 }

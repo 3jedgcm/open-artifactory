@@ -1,9 +1,12 @@
-import jwt from 'jsonwebtoken'
+import jwt, { SignOptions } from 'jsonwebtoken'
 import { authenticator } from '@otplib/preset-default'
 import fs from 'fs'
 import path from 'path'
+import { compare } from 'bcrypt'
 import constants from '../../constants'
 import OpenArtifactoryError from '../../model/errors/OpenArtifactoryError'
+// eslint-disable-next-line import/no-cycle
+import ApiTokenService from '../entityServices/ApiTokenService'
 
 /**
  * Service to implement security with One-Time Password and JWT Token
@@ -38,7 +41,12 @@ export default class SecurityService {
     }
   }
 
-  public static saveOtpSecret(otpSecret: string) {
+  /**
+   * Stores One-Time Password
+   * Write otpFile with OTP secret
+   * @param otpSecret
+   */
+  public static saveOtpSecret(otpSecret: string): void {
     this.otpSecret = otpSecret
 
     const folderPath = path.dirname(constants.otpFilePath)
@@ -83,12 +91,28 @@ export default class SecurityService {
    * Generates a JSON Web Token
    * @return JSON web token and expiration date
    */
-  public static generateJwtToken(): { jwtToken: string, expireAt: Date } {
-    const jwtToken = jwt.sign({}, constants.jwtSecret, { expiresIn: constants.jwtExpirationTime })
+  public static generateJwtToken(
+    defaultExpirationDate: boolean = true,
+    payload: object = { isApiToken: false },
+    expirationDate?: Date
+  ): { jwtToken: string, expireAt?: Date } {
+    const jwtOption: SignOptions | undefined = defaultExpirationDate
+      ? { expiresIn: constants.jwtExpirationTime }
+      : undefined
+
+    let tokenPayload = { ...payload }
+    if (!defaultExpirationDate && expirationDate) {
+      tokenPayload = {
+        ...payload,
+        exp: Math.floor(expirationDate.getTime() / 1000)
+      }
+    }
+
+    const jwtToken = jwt.sign(tokenPayload, constants.jwtSecret, jwtOption)
     const jwtPayload = jwt.decode(jwtToken) as { exp: number }
     return {
       jwtToken,
-      expireAt: new Date(jwtPayload.exp * 1000)
+      expireAt: jwtPayload.exp ? new Date(jwtPayload.exp * 1000) : undefined
     }
   }
 
@@ -97,12 +121,21 @@ export default class SecurityService {
    * @param jwtToken token to check
    * @throws {@link OpenArtifactoryError} if invalid authentication
    */
-  public static verifyJwtToken(jwtToken: string): void {
+  public static async verifyJwtToken(jwtToken: string): Promise<void> {
     try {
-      jwt.verify(jwtToken, constants.jwtSecret, {
+      const jwtPayload = jwt.verify(jwtToken, constants.jwtSecret, {
         ignoreNotBefore: false,
         ignoreExpiration: false
-      })
+      }) as { isApiToken?: boolean, id?: number, key?: string }
+
+      if (jwtPayload.isApiToken) {
+        if (jwtPayload.id && jwtPayload.key) {
+          const apiToken = await ApiTokenService.get(jwtPayload.id)
+          await compare(jwtPayload.key, apiToken.hash)
+        } else {
+          throw new Error()
+        }
+      }
     } catch {
       throw new OpenArtifactoryError(401, 'Unauthorized')
     }

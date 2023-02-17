@@ -1,13 +1,12 @@
-import FileHttpEntity from '../httpEntites/FileHttpEntity'
-import HttpResponse from './HttpResponse'
+import FileHttpEntity from '../../httpEntites/file/FileHttpEntity'
+import HttpResponse from '../HttpResponse'
 
 /**
- * Multiple file entities response model
+ * File list response model
  */
 export default interface FilesHttpResponse extends HttpResponse {
   /**
    * Stored files count
-   * @example "3"
    */
   count: number
 

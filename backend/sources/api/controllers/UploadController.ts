@@ -13,8 +13,8 @@ import {
 import mapper from '../../services/mapper'
 import FileService from '../../services/entityServices/FileService'
 import File from '../../model/entities/File'
-import FileHttpResponse from '../../model/httpResponses/FileHttpResponse'
-import FileHttpEntity from '../../model/httpEntites/FileHttpEntity'
+import FileHttpResponse from '../../model/httpResponses/file/FileHttpResponse'
+import FileHttpEntity from '../../model/httpEntites/file/FileHttpEntity'
 import ErrorHttpResponse from '../../model/httpResponses/ErrorResponse'
 import { FileName } from '../../model/httpEntites/primitivesHttpEnties'
 import { fileExample } from '../openApiExamples'
@@ -25,6 +25,7 @@ import { fileExample } from '../openApiExamples'
   error: true,
   details: { message: 'Sample error' }
 })
+@Security('bearer')
 @Tags('Upload')
 @Route('upload')
 export class UploadController extends Controller {
@@ -60,7 +61,6 @@ export class UploadController extends Controller {
     message: 'Unauthorized',
     error: true
   })
-  @Security('bearer')
   @Post()
   public async upload(
     @UploadedFile() file: Express.Multer.File,

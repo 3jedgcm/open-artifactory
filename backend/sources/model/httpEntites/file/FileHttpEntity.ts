@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes'
-import { Uuid } from './primitivesHttpEnties'
+import { Uuid } from '../primitivesHttpEnties'
 
 /**
  * File entity model
@@ -19,7 +19,7 @@ export default class FileHttpEntity {
     name!: string
 
   /**
-   * File comment
+   * File comment (optional)
    * @example "This is a comment"
    */
   comment!: string | null
