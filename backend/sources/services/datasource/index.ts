@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm'
 import File from '../../model/entities/File'
 import constants from '../../constants'
+import ApiToken from '../../model/entities/ApiToken'
 
 /**
  * Database access
@@ -10,7 +11,8 @@ export default new DataSource({
   type: 'sqlite',
   database: constants.databaseFilePath,
   entities: [
-    File
+    File,
+    ApiToken
   ],
   synchronize: true
 })

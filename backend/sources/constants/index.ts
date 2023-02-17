@@ -67,6 +67,10 @@ class Constants {
     return process.env.JWT_EXPIRATION_TIME ?? '20m'
   }
 
+  get saltRounds() {
+    return Number(process.env.SALT_ROUNDS) ?? 10
+  }
+
   /**
    * Storage limit in bytes (-1 = no limit)
    */

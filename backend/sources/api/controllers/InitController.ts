@@ -98,7 +98,7 @@ export class InitController extends Controller {
       error: false,
       message: 'One-Time Password secret successfully saved',
       jwtToken,
-      expireAt
+      expireAt: expireAt!
     }
   }
 }
