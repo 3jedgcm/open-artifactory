@@ -6,6 +6,7 @@ import { AutoMap } from '@automapper/classes'
 export default class ApiTokenCreateHttpEntity {
   /**
    * Token name
+   * @pattern [\S\s]+[\S]+ 'name' is required
    * @example "API key for CI"
    */
   @AutoMap()

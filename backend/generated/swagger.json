@@ -211,7 +211,8 @@
 					"name": {
 						"type": "string",
 						"description": "Token name",
-						"example": "API key for CI"
+						"example": "API key for CI",
+						"pattern": "[\\S\\s]+[\\S]+"
 					},
 					"comment": {
 						"type": "string",
@@ -239,7 +240,8 @@
 					"name": {
 						"type": "string",
 						"description": "Token name",
-						"example": "API key for CI"
+						"example": "API key for CI",
+						"pattern": "[\\S\\s]+[\\S]+"
 					},
 					"comment": {
 						"type": "string",
