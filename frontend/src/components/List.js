@@ -4,6 +4,7 @@ import ArtifactItem from './ArtifactItem'
 import ArtifactHeader from './ArtifactHeader'
 import Footer from './Footer'
 import UploadFile from './UploadFile'
+import APITokenList from './APITokenList'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : ""
 
@@ -11,6 +12,7 @@ export default function List({ authorization, onDisconnect }) {
 
     const [upload, setUpload] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [openApi, setOpenApi] = useState(false)
     const [files, setFiles] = useState([])
     const [page, setPage] = useState(0)
     const [availableStorage, setAvailableStorage] = useState(0)
@@ -151,7 +153,9 @@ export default function List({ authorization, onDisconnect }) {
                         })
                     }
                 </CardBody>
+                <APITokenList show={openApi} setShow={(value) => setOpenApi(value)} authorization={authorization} onDisconnect={() => onDisconnect()} />
                 <Footer
+                    onOpenApi={() => setOpenApi(true)}
                     nextPage={() => nextPage()}
                     previousPage={() => previousPage()}
                     onUpload={() => { setUpload(true) }}

@@ -5,6 +5,11 @@ import router from './api/router'
 import SecurityService from './services/security/SecurityService'
 
 /**
+ * Force server use UTC timezone
+ */
+process.env.TZ = 'UTC'
+
+/**
  * Initialize OTP secret and share it on console
  */
 SecurityService.initializeOtp()

@@ -38,6 +38,224 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Id": {
+				"type": "integer",
+				"format": "int32",
+				"example": 1,
+				"description": "Id"
+			},
+			"ApiTokenHttpEntity": {
+				"description": "API Token entity model",
+				"properties": {
+					"id": {
+						"$ref": "#/components/schemas/Id",
+						"description": "Token identifier"
+					},
+					"name": {
+						"type": "string",
+						"description": "Token name",
+						"example": "API key for CI"
+					},
+					"comment": {
+						"type": "string",
+						"nullable": true,
+						"description": "Token comment (optional)",
+						"example": "This is a comment"
+					},
+					"expireAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true,
+						"description": "Token expiration date (optional)",
+						"example": "2023-01-01T00:00:00.000Z"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Token creation date",
+						"example": "2023-01-01T00:00:00.000Z"
+					},
+					"isValid": {
+						"type": "boolean",
+						"description": "ValidityStatus"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"comment",
+					"expireAt",
+					"createdAt",
+					"isValid"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiTokensResponse": {
+				"description": "API Token list response model",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"apiTokens": {
+						"items": {
+							"$ref": "#/components/schemas/ApiTokenHttpEntity"
+						},
+						"type": "array",
+						"description": "API token list entity"
+					},
+					"count": {
+						"type": "number",
+						"format": "double",
+						"description": "API token count"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"apiTokens",
+					"count"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiTokenResponse": {
+				"description": "API Token response model",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"apiToken": {
+						"$ref": "#/components/schemas/ApiTokenHttpEntity",
+						"description": "API token entity"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"apiToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiTokenCreateResponse": {
+				"description": "API Token creation response model",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"apiToken": {
+						"$ref": "#/components/schemas/ApiTokenHttpEntity",
+						"description": "API token entity"
+					},
+					"bearerToken": {
+						"type": "string",
+						"description": "Bearer token to login with api key\n  // eslint-disable-next-line max-len",
+						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"apiToken",
+					"bearerToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiTokenCreateHttpEntity": {
+				"description": "API Token creation entity model",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Token name",
+						"example": "API key for CI",
+						"pattern": "[\\S\\s]+[\\S]+"
+					},
+					"comment": {
+						"type": "string",
+						"nullable": true,
+						"description": "Token comment (optional)",
+						"example": "This is a comment"
+					},
+					"expireAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true,
+						"description": "Token expiration date (optional)",
+						"example": "2023-01-01T00:00:00.000Z"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiTokenEditHttpEntity": {
+				"description": "API Token creation entity model",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Token name",
+						"example": "API key for CI",
+						"pattern": "[\\S\\s]+[\\S]+"
+					},
+					"comment": {
+						"type": "string",
+						"nullable": true,
+						"description": "Token comment (optional)",
+						"example": "This is a comment"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Uuid": {
 				"type": "string",
 				"example": "146fb209-af3b-4c67-863a-a98b641c95e5",
@@ -59,7 +277,7 @@
 					"comment": {
 						"type": "string",
 						"nullable": true,
-						"description": "File comment",
+						"description": "File comment (optional)",
 						"example": "This is a comment"
 					},
 					"mimeType": {
@@ -111,7 +329,7 @@
 				"additionalProperties": false
 			},
 			"FilesHttpResponse": {
-				"description": "Multiple file entities response model",
+				"description": "File list response model",
 				"properties": {
 					"httpCode": {
 						"type": "number",
@@ -132,8 +350,7 @@
 					"count": {
 						"type": "number",
 						"format": "double",
-						"description": "Stored files count",
-						"example": "3"
+						"description": "Stored files count"
 					},
 					"files": {
 						"items": {
@@ -227,7 +444,7 @@
 				"additionalProperties": false
 			},
 			"FileHttpResponse": {
-				"description": "Single file entity response model",
+				"description": "File response model",
 				"properties": {
 					"httpCode": {
 						"type": "number",
@@ -406,7 +623,7 @@
 				"type": "http",
 				"scheme": "bearer",
 				"bearerFormat": "JWT",
-				"description": "Use /login endpoint to get bearer token"
+				"description": "Use /login endpoint to get bearer token or use an API token"
 			}
 		}
 	},
@@ -423,6 +640,563 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/tokens": {
+			"get": {
+				"operationId": "GetList",
+				"responses": {
+					"200": {
+						"description": "API token list",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiTokensResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "1 api token found",
+											"count": 1,
+											"apiTokens": [
+												{
+													"id": 1,
+													"name": "API key for CI",
+													"comment": "This is a comment",
+													"expireAt": "2023-01-01T00:00:00.000Z",
+													"isValid": true,
+													"createdAt": "2023-01-01T00:00:00.000Z"
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Gets API token metadata list",
+				"summary": "Get API token list",
+				"tags": [
+					"Tokens"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "Generate",
+				"responses": {
+					"201": {
+						"description": "API token creation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiTokenCreateResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 api token generated",
+											"apiToken": {
+												"id": 1,
+												"name": "API key for CI",
+												"comment": "This is a comment",
+												"expireAt": "2023-01-01T00:00:00.000Z",
+												"isValid": true,
+												"createdAt": "2023-01-01T00:00:00.000Z"
+											},
+											"bearerToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Generates API token",
+				"summary": "Generates API token",
+				"tags": [
+					"Tokens"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "token generation parameters",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ApiTokenCreateHttpEntity",
+								"description": "token generation parameters"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/tokens/{id}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "API token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiTokenResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 api token named : API key for CI",
+											"apiToken": {
+												"id": 1,
+												"name": "API key for CI",
+												"comment": "This is a comment",
+												"expireAt": "2023-01-01T00:00:00.000Z",
+												"isValid": true,
+												"createdAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Gets API token metadata by id",
+				"summary": "Gets API token",
+				"tags": [
+					"Tokens"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "token id to get",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Id"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "Edit",
+				"responses": {
+					"200": {
+						"description": "API token edited",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiTokenResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 api token edited",
+											"apiToken": {
+												"id": 1,
+												"name": "API key for CI",
+												"comment": "This is a comment",
+												"expireAt": "2023-01-01T00:00:00.000Z",
+												"isValid": true,
+												"createdAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Edits API token metadata",
+				"summary": "Edits API token",
+				"tags": [
+					"Tokens"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "token id to edit",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Id"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "token metadata to set",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ApiTokenEditHttpEntity",
+								"description": "token metadata to set"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Revoke",
+				"responses": {
+					"200": {
+						"description": "API token deleted",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiTokenResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 api token deleted",
+											"apiToken": {
+												"id": 1,
+												"name": "API key for CI",
+												"comment": "This is a comment",
+												"expireAt": "2023-01-01T00:00:00.000Z",
+												"isValid": true,
+												"createdAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Revokes API token",
+				"summary": "Revokes API token",
+				"tags": [
+					"Tokens"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "token id to revoke",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Id"
+						}
+					}
+				]
+			}
+		},
 		"/files": {
 			"get": {
 				"operationId": "GetList",
@@ -495,31 +1269,6 @@
 											"httpCode": 401,
 											"message": "Unauthorized",
 											"error": true
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation failed error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorHttpResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"httpCode": 422,
-											"message": "Validation failed",
-											"error": true,
-											"details": {
-												"field": {
-													"message": "Validation message",
-													"value": "Bad value"
-												}
-											}
 										}
 									}
 								}
@@ -610,31 +1359,6 @@
 							}
 						}
 					},
-					"422": {
-						"description": "Validation failed error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorHttpResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"httpCode": 422,
-											"message": "Validation failed",
-											"error": true,
-											"details": {
-												"field": {
-													"message": "Validation message",
-													"value": "Bad value"
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					},
 					"500": {
 						"description": "Internal server error",
 						"content": {
@@ -698,31 +1422,6 @@
 											"httpCode": 422,
 											"message": "4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found",
 											"error": true
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation failed error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorHttpResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"httpCode": 422,
-											"message": "Validation failed",
-											"error": true,
-											"details": {
-												"field": {
-													"message": "Validation message",
-													"value": "Bad value"
-												}
-											}
 										}
 									}
 								}
@@ -994,31 +1693,6 @@
 							}
 						}
 					},
-					"422": {
-						"description": "Validation failed error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorHttpResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"httpCode": 422,
-											"message": "Validation failed",
-											"error": true,
-											"details": {
-												"field": {
-													"message": "Validation message",
-													"value": "Bad value"
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					},
 					"500": {
 						"description": "Internal server error",
 						"content": {
@@ -1131,31 +1805,6 @@
 											"httpCode": 422,
 											"message": "4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found",
 											"error": true
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation failed error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorHttpResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"httpCode": 422,
-											"message": "Validation failed",
-											"error": true,
-											"details": {
-												"field": {
-													"message": "Validation message",
-													"value": "Bad value"
-												}
-											}
 										}
 									}
 								}
