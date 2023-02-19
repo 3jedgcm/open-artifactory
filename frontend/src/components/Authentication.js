@@ -62,14 +62,9 @@ export default function Authentication() {
         })
         let resultJSON = await result.json()
         if (resultJSON.error) {
-          if (resultJSON.httpCode == 403) {
-            setCode("")
-            setError(true)
-            setLoading(false)
-          } else {
-            setInternalError(true)
-            return
-          }
+          setCode("")
+          setError(true)
+          setLoading(false)
         } else {
           setToken(resultJSON.jwtToken)
           setLoading(false)
@@ -116,7 +111,6 @@ export default function Authentication() {
       setCode("")
     }
   }
-
 
   if (token.length > 0) {
     return <List authorization={token} onDisconnect={() => { setToken("") }} />
@@ -165,7 +159,6 @@ export default function Authentication() {
                   null
               }
             </CardBody>
-
         }
         <CardFooter>
           <Link href="https://github.com/3jedgcm/open-artifactory">
