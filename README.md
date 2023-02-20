@@ -28,6 +28,9 @@ docker pull 3jedgcm/open-artifactory:latest
 
 * `PORT` - Expose port
 * `BASE_URL` - Expose base url
+* `OTP_SERVICE_NAME` - OTP service name
+* `JWT_SECRET` - JWT Secret
+* `STORAGE_LIMIT` - Storage open artifactory limit
 
 #### Volumes
 
