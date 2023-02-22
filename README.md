@@ -1,6 +1,8 @@
 # Open artifactory
 
- Open source artifactory service .
+Open artifactory is an open-source software for file and artifact management. 
+
+<img src="https://raw.githubusercontent.com/3jedgcm/open-artifactory/main/.res/image.png" alt="image" width="400"/>
 
 ## Getting Started
 
@@ -19,17 +21,20 @@ In order to run this container you'll need docker installed.
 #### Container
 
 ```shell
-docker pull 3jedgcm/open-artifactory
+docker pull 3jedgcm/open-artifactory:latest
 ```
 
 #### Environment Variables
 
 * `PORT` - Expose port
 * `BASE_URL` - Expose base url
+* `OTP_SERVICE_NAME` - OTP service name
+* `JWT_SECRET` - JWT Secret
+* `STORAGE_LIMIT` - Storage open artifactory limit
 
 #### Volumes
 
-* `/usr/src/app/uploads` - Upload volume
+* `/usr/src/app/data` - Upload folder
 
 #### Useful File Locations
 
