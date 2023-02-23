@@ -2,7 +2,7 @@ import { QueryRunner } from 'typeorm'
 import fs from 'fs'
 import { v4 } from 'uuid'
 import * as crypto from 'crypto'
-import { check } from 'diskusage'
+import diskusage from 'diskusage-ng'
 import path from 'path'
 import fastFolderSizeSync from 'fast-folder-size/sync'
 import File from '../../model/entities/File'
@@ -12,6 +12,8 @@ import datasource from '../datasource'
 import { Uuid } from '../../model/httpEntites/primitivesHttpEnties'
 import constants from '../../constants'
 import StorageHttpEntity from '../../model/httpEntites/StorageHttpEntity'
+
+type Usage = { total: number, used: number, available: number }
 
 /**
  * Service to manage file entities
@@ -71,7 +73,7 @@ export default class FileService {
       await repository.files.remove(fileEntity)
     }
 
-    throw new OpenArtifactoryError(404, `${uuid} file not found`)
+    throw new OpenArtifactoryError(404, `${uuid} not found`)
   }
 
   /**
@@ -213,7 +215,12 @@ export default class FileService {
       fs.mkdirSync(storagePath, { recursive: true })
     }
 
-    const pathUsage = await check(storagePath)
+    const pathUsage: Usage = await new Promise((resolve, reject) => {
+      diskusage(storagePath, (error, usage) => {
+        resolve(usage)
+      })
+    })
+
     const usedSpace = fastFolderSizeSync(storagePath)
 
     if (usedSpace || usedSpace === 0) {
