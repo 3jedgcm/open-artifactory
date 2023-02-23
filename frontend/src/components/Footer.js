@@ -20,7 +20,7 @@ export default function Footer({ onRefresh, previousPage, nextPage, page, maxPag
                                 {(page + 1) + "/" + (maxPage + 1)}
                             </Text>
                         </HStack>
-                        <HStack display={{ base: 'none', sm: 'none', md: 'inherit' }} flex={1} justifyContent={'center'} >
+                        <HStack display={{ base: 'none', sm: 'none', md: 'inherit' }} flex={2} justifyContent={'center'} >
                             <Text textAlign='center' fontWeight='bold' color='blackAlpha.700' >
                                 {"Storage free : " + getGo(availableStorage) + " Go ( " + availablePercent + "% )"}
                             </Text>

@@ -191,7 +191,7 @@
 					},
 					"bearerToken": {
 						"type": "string",
-						"description": "Bearer token to login with api key\n  // eslint-disable-next-line max-len",
+						"description": "Bearer token to login with api key\r\n  // eslint-disable-next-line max-len",
 						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 					}
 				},
@@ -559,7 +559,7 @@
 					},
 					"jwtToken": {
 						"type": "string",
-						"description": "JSON Web Token\n// eslint-disable-next-line max-len",
+						"description": "JSON Web Token\r\n// eslint-disable-next-line max-len",
 						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 					},
 					"expireAt": {
@@ -1924,7 +1924,7 @@
 						}
 					}
 				},
-				"description": "Generates a new One-Time Password secret\nReturn a 403 error if OTP secret is already set",
+				"description": "Generates a new One-Time Password secret\r\nReturn a 403 error if OTP secret is already set",
 				"summary": "Get initialization data",
 				"tags": [
 					"Init"
@@ -2042,7 +2042,7 @@
 						}
 					}
 				},
-				"description": "Saves OTP configuration\nReturns a 403 error if OTP secret is already set\nReturns a 401 error if OTP token doesn\"t match with OTP secret",
+				"description": "Saves OTP configuration\r\nReturns a 403 error if OTP secret is already set\r\nReturns a 401 error if OTP token doesn\"t match with OTP secret",
 				"summary": "Save initialization data",
 				"tags": [
 					"Init"
