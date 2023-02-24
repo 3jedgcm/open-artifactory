@@ -71,7 +71,7 @@ export class FilesController extends Controller {
 
   /**
    * Gets storage data
-   * @summary gets storage data
+   * @summary Gets storage data
    */
   @Response<ErrorHttpResponse>(401, 'Unauthorized', {
     httpCode: 401,

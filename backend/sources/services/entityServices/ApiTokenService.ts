@@ -1,5 +1,5 @@
 import { v4 } from 'uuid'
-import { hashSync } from 'bcrypt'
+import { hashSync } from 'bcryptjs'
 import { QueryRunner } from 'typeorm'
 import ApiToken from '../../model/entities/ApiToken'
 import constants from '../../constants'
@@ -57,7 +57,7 @@ export default class ApiTokenService {
       await queryRunner.connect()
       await queryRunner.startTransaction()
 
-      apiToken = await repository.apiTokens.save(apiToken)
+      apiToken = await queryRunner.manager.save(apiToken)
       const jwt = SecurityService.generateJwtToken(false, {
         isApiToken: true,
         key,
@@ -80,6 +80,10 @@ export default class ApiTokenService {
         'An errors occur during api token creation',
         error
       )
+    } finally {
+      if (queryRunner) {
+        await queryRunner.release()
+      }
     }
   }
 

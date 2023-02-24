@@ -4,7 +4,7 @@ import { v4 } from 'uuid'
 import * as crypto from 'crypto'
 import diskusage from 'diskusage-ng'
 import path from 'path'
-import fastFolderSizeSync from 'fast-folder-size/sync'
+import getFolderSize from 'get-folder-size'
 import File from '../../model/entities/File'
 import repository from '../datasource/repository'
 import OpenArtifactoryError from '../../model/errors/OpenArtifactoryError'
@@ -12,8 +12,6 @@ import datasource from '../datasource'
 import { Uuid } from '../../model/httpEntites/primitivesHttpEnties'
 import constants from '../../constants'
 import StorageHttpEntity from '../../model/httpEntites/StorageHttpEntity'
-
-type Usage = { total: number, used: number, available: number }
 
 /**
  * Service to manage file entities
@@ -31,10 +29,10 @@ export default class FileService {
       await queryRunner.connect()
       await queryRunner.startTransaction()
 
-      const files = await repository.files.find()
+      const files = await queryRunner.manager.find(File)
       files.filter((file) => {
         if (!fs.existsSync(file.path)) {
-          repository.files.remove(file)
+          queryRunner.manager.remove(file)
           return false
         }
         return true
@@ -47,6 +45,10 @@ export default class FileService {
         await queryRunner.rollbackTransaction()
       }
       throw error
+    } finally {
+      if (queryRunner) {
+        await queryRunner.release()
+      }
     }
   }
 
@@ -113,7 +115,7 @@ export default class FileService {
       await queryRunner.connect()
       await queryRunner.startTransaction()
 
-      fileEntity = await repository.files.save(fileEntity)
+      fileEntity = await queryRunner.manager.save(fileEntity)
 
       if (!fs.existsSync(constants.filesFolderPath)) {
         fs.mkdirSync(constants.filesFolderPath)
@@ -131,6 +133,10 @@ export default class FileService {
         'An errors occur during file upload',
         error
       )
+    } finally {
+      if (queryRunner) {
+        await queryRunner.release()
+      }
     }
 
     return fileEntity
@@ -153,7 +159,7 @@ export default class FileService {
 
       const oldPath = fileEntity.path
       fileEntity.uuid = v4()
-      fileEntity = await repository.files.save(fileEntity)
+      fileEntity = await queryRunner.manager.save(fileEntity)
 
       fs.renameSync(oldPath, fileEntity.path)
       await queryRunner.commitTransaction()
@@ -167,6 +173,10 @@ export default class FileService {
         'An errors occur during uuid change',
         error
       )
+    } finally {
+      if (queryRunner) {
+        await queryRunner.release()
+      }
     }
 
     return fileEntity
@@ -208,6 +218,8 @@ export default class FileService {
    * @return {@link StorageHttpEntity} with disk data
    */
   public static async getStorageData(): Promise<StorageHttpEntity> {
+    type Usage = { readonly total: number, readonly used: number, readonly available: number }
+
     const storagePath = path.resolve(constants.filesFolderPath)
 
     if (!fs.existsSync(storagePath) || !fs.lstatSync(storagePath)
@@ -217,11 +229,21 @@ export default class FileService {
 
     const pathUsage: Usage = await new Promise((resolve, reject) => {
       diskusage(storagePath, (error, usage) => {
+        if (error) {
+          reject(error)
+        }
         resolve(usage)
       })
     })
 
-    const usedSpace = fastFolderSizeSync(storagePath)
+    const usedSpace: number = await new Promise((resolve, reject) => {
+      getFolderSize(storagePath, (error, usage) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(usage)
+      })
+    })
 
     if (usedSpace || usedSpace === 0) {
       const totalSpace = constants.storageLimit > 0

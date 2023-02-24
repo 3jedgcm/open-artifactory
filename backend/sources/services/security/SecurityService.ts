@@ -2,7 +2,7 @@ import jwt, { SignOptions } from 'jsonwebtoken'
 import { authenticator } from '@otplib/preset-default'
 import fs from 'fs'
 import path from 'path'
-import { compare } from 'bcrypt'
+import { compare } from 'bcryptjs'
 import constants from '../../constants'
 import OpenArtifactoryError from '../../model/errors/OpenArtifactoryError'
 // eslint-disable-next-line import/no-cycle

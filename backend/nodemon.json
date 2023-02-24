@@ -3,11 +3,11 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "node_modules",
-    "sources/tsoa/**"
+    "sources/generated",
+    "generated"
   ],
   "watch": [
-    "sources",
-    "tsoa.json"
+    "sources"
   ],
   "exec": "yarn run dev-start",
   "ext": "ts"

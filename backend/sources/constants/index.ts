@@ -67,6 +67,9 @@ class Constants {
     return process.env.JWT_EXPIRATION_TIME ?? '20m'
   }
 
+  /**
+   * Salt rounds for hash algorithm
+   */
   get saltRounds() {
     return Number(process.env.SALT_ROUNDS) ?? 10
   }

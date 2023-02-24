@@ -2,15 +2,18 @@ import {
   json, Request, Response, Router, static as expressStatic, urlencoded
 } from 'express'
 import path from 'path'
+import compression from 'compression'
 import OpenArtifactoryError from '../model/errors/OpenArtifactoryError'
 import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware'
-import { RegisterRoutes } from '../tsoa/routes'
+import { RegisterRoutes } from '../generated/routes'
 
 /**
  * Default router
  * @see {@link Router} for usage
  */
 const router = Router()
+
+router.use(compression())
 
 /**
  * Use parser middlewares
