@@ -1,0 +1,43 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: Build and publish docker image
+    image: plugins/docker
+    settings:
+      mtu: 1450
+      squash: true
+      username:
+        from_secret: repository-user
+      password:
+        from_secret: repository-pass
+      registry:
+        from_secret: repository-url
+      repo:
+        from_secret: repository-repo
+      tags:
+        - ${DRONE_BRANCH/\//-}
+        - ${DRONE_BRANCH/\//-}-${DRONE_BUILD_NUMBER}
+  - name: Update kubernetes host
+    image: quay.io/honestbee/drone-kubernetes
+    settings:
+      kubernetes_server:
+        from_secret: cluster-url
+      kubernetes_token:
+        from_secret: cluster-token
+      namespace:
+        from_secret: cluster-namespace
+      deployment:
+        from_secret: cluster-deployment
+      container:
+        from_secret: cluster-container
+      repo:
+        from_secret: repository-repo
+      tag: ${DRONE_BRANCH/\//-}-${DRONE_BUILD_NUMBER}
+
+trigger:
+  branch:
+    - develop
+  event:
+    - push

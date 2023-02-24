@@ -7,7 +7,7 @@
     "url": "git+https://github.com/3jedgcm/open-artifactory.git"
   },
   "scripts": {
-    "build": "tsoa spec-and-routes && webpack",
+    "build": "tsoa spec-and-routes && webpack --progress --color",
     "start": "cd builds && node index.js",
     "dev-start": "tsoa spec-and-routes && npx tsc && cd build && node index.js",
     "dev": "nodemon"
