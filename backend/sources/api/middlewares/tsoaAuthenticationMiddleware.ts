@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import OpenArtifactoryError from '../../model/errors/OpenArtifactoryError'
-import SecurityService from '../../services/security/SecurityService'
+import SecurityService from '../../services/tools/SecurityService'
 
 const TSOA_BEARER_SECURITY_NAME = 'bearer'
 /**

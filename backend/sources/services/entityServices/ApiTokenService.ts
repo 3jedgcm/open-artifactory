@@ -7,7 +7,7 @@ import repository from '../datasource/repository'
 import datasource from '../datasource'
 import OpenArtifactoryError from '../../model/errors/OpenArtifactoryError'
 // eslint-disable-next-line import/no-cycle
-import SecurityService from '../security/SecurityService'
+import SecurityService from '../tools/SecurityService'
 
 /**
  * Service to manage api token entities

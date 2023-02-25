@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { ValidateError } from '@tsoa/runtime'
 import OpenArtifactoryError from '../../model/errors/OpenArtifactoryError'
+import logger from '../../services/tools/logger'
 
 /**
  * Handle errors and set right status and payload on Express response
@@ -25,11 +26,14 @@ export default (
       artifactoryError = new OpenArtifactoryError(422, 'Validation failed', validateError.fields)
     } else {
       artifactoryError = new OpenArtifactoryError(500, 'Internal server error', error)
-      console.error('Error occur', artifactoryError)
     }
 
     response.status(artifactoryError.httpResponse.httpCode)
       .send(artifactoryError.httpResponse)
+
+    if (artifactoryError.httpResponse.httpCode === 500) {
+      logger.error('An error occur :', artifactoryError)
+    }
   }
   nextFunction(error)
 }

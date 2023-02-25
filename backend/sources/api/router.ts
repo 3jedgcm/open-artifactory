@@ -6,6 +6,7 @@ import compression from 'compression'
 import OpenArtifactoryError from '../model/errors/OpenArtifactoryError'
 import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware'
 import { RegisterRoutes } from '../generated/routes'
+import corsMiddleware from './middlewares/corsMiddleware'
 
 /**
  * Default router
@@ -13,6 +14,14 @@ import { RegisterRoutes } from '../generated/routes'
  */
 const router = Router()
 
+/**
+ * Set CORS settings
+ */
+router.use(corsMiddleware)
+
+/**
+ * Enable g-zip compression
+ */
 router.use(compression())
 
 /**

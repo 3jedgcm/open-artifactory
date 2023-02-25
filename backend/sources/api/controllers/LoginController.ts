@@ -2,7 +2,7 @@ import {
   Body, Example, Post, Response, Route, SuccessResponse, Tags
 } from 'tsoa'
 import OtpLoginHttpEntity from '../../model/httpEntites/OtpLoginHttpEntity'
-import SecurityService from '../../services/security/SecurityService'
+import SecurityService from '../../services/tools/SecurityService'
 import BearerHttpResponse from '../../model/httpResponses/BearerTokenHttpResponse'
 import ErrorHttpResponse from '../../model/httpResponses/ErrorResponse'
 
