@@ -1,5 +1,9 @@
 import { AutoMap } from '@automapper/classes'
 import { Uuid } from '../primitivesHttpEnties'
+// eslint-disable-next-line import/no-cycle
+import GroupHttpEntity from '../group/GroupHttpEntity'
+// eslint-disable-next-line import/no-cycle
+import BadgeHttpEntity from '../badge/BadgeHttpEntity'
 
 /**
  * File entity model
@@ -22,7 +26,8 @@ export default class FileHttpEntity {
    * File comment (optional)
    * @example "This is a comment"
    */
-  comment!: string | null
+  @AutoMap()
+    comment!: string | null
 
   /**
    * File mime type
@@ -58,6 +63,25 @@ export default class FileHttpEntity {
    */
   @AutoMap()
     createdAt!: Date
+
+  /**
+   * File updating date
+   * @example "2023-01-01T00:00:00.000Z"
+   */
+  @AutoMap()
+    updateAt!: Date
+
+  /**
+   * File group
+   */
+  @AutoMap()
+    group!: GroupHttpEntity | null
+
+  /**
+   * File badge list
+   */
+  @AutoMap()
+    badges!: BadgeHttpEntity[]
 
   /**
    * File URL

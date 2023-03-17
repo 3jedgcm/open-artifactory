@@ -1,10 +1,22 @@
 import {
-  Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn
+  Column,
+  CreateDateColumn,
+  Entity,
+  Generated,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import path from 'path'
 import { AutoMap } from '@automapper/classes'
 import constants from '../../constants'
 import { Uuid } from '../httpEntites/primitivesHttpEnties'
+// eslint-disable-next-line import/no-cycle
+import Group from './Group'
+// eslint-disable-next-line import/no-cycle
+import Badge from './Badge'
 
 /**
  * File entity
@@ -37,15 +49,9 @@ export default class File {
    */
   @Column({
     type: 'text',
-    transformer: {
-      to(value) {
-        return value || ''
-      },
-      from(value) {
-        return value || null
-      }
-    }
+    nullable: true
   })
+  @AutoMap()
     comment!: string | null
 
   /**
@@ -77,11 +83,33 @@ export default class File {
     downloadCount!: number
 
   /**
-   * Upload date
+   * File upload date
    */
   @CreateDateColumn()
   @AutoMap()
     createdAt!: Date
+
+  /**
+   * File updating date
+   */
+  @UpdateDateColumn()
+  @AutoMap()
+    updateAt!: Date
+
+  /**
+   * File group
+   */
+  @ManyToOne(() => Group, (group) => group.files, { nullable: true })
+  @AutoMap()
+    group!: Group | null
+
+  /**
+   * File badge list
+   */
+  @ManyToMany(() => Badge, (badge) => badge.files)
+  @JoinTable()
+  @AutoMap()
+    badges!: Badge[]
 
   /**
    * File path

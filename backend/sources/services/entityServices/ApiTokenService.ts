@@ -1,10 +1,8 @@
 import { v4 } from 'uuid'
 import { hashSync } from 'bcryptjs'
-import { QueryRunner } from 'typeorm'
 import ApiToken from '../../model/entities/ApiToken'
 import constants from '../../constants'
-import repository from '../datasource/repository'
-import datasource from '../datasource'
+import repository from '../dataSource/repository'
 import OpenArtifactoryError from '../../model/errors/OpenArtifactoryError'
 // eslint-disable-next-line import/no-cycle
 import SecurityService from '../tools/SecurityService'
@@ -23,15 +21,19 @@ export default class ApiTokenService {
   /**
    * Get API token by id
    * @param id token id to get
+   * @param apiTokenRepository database repository to use
    * @throws {@link OpenArtifactoryError} if not found
    */
-  public static async get(id: number): Promise<ApiToken> {
-    const apiToken = await repository.apiTokens.findOneBy({ id })
+  public static async get(
+    id: number,
+    apiTokenRepository = repository.apiTokens
+  ): Promise<ApiToken> {
+    const apiToken = await apiTokenRepository.findOneBy({ id })
     if (apiToken) {
       return apiToken
     }
 
-    throw new OpenArtifactoryError(404, `#${id} API Token not found`)
+    throw new OpenArtifactoryError(404, `#${id} API token not found`)
   }
 
   /**
@@ -41,50 +43,28 @@ export default class ApiTokenService {
    */
   public static async generate(newApiToken: ApiToken)
     : Promise<{ bearerToken: string, apiToken: ApiToken }> {
-    let queryRunner!: QueryRunner
-    let apiToken
-
-    try {
+    return repository.executeTransaction(async (entityManager) => {
+      const apiTokenRepository = entityManager.getRepository(ApiToken)
       const key = v4()
 
-      apiToken = repository.apiTokens.create()
+      let apiToken = repository.apiTokens.create()
       apiToken.expireAt = newApiToken.expireAt
       apiToken.name = newApiToken.name
-      apiToken.comment = newApiToken.comment
+      apiToken.description = newApiToken.description
       apiToken.hash = hashSync(key, constants.saltRounds)
 
-      queryRunner = datasource.createQueryRunner()
-      await queryRunner.connect()
-      await queryRunner.startTransaction()
-
-      apiToken = await queryRunner.manager.save(apiToken)
+      apiToken = await apiTokenRepository.save(apiToken)
       const jwt = SecurityService.generateJwtToken(false, {
         isApiToken: true,
         key,
         id: apiToken.id
-      }, apiToken.expireAt)
-
-      await queryRunner.commitTransaction()
+      }, apiToken.expireAt ?? undefined)
 
       return {
         bearerToken: jwt.jwtToken,
         apiToken
       }
-    } catch (error) {
-      if (queryRunner && queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction()
-      }
-
-      throw new OpenArtifactoryError(
-        500,
-        'An errors occur during api token creation',
-        error
-      )
-    } finally {
-      if (queryRunner) {
-        await queryRunner.release()
-      }
-    }
+    })
   }
 
   /**
@@ -93,12 +73,15 @@ export default class ApiTokenService {
    * @throws {@link OpenArtifactoryError} if not found
    */
   public static async edit(tokenUpdate: ApiToken): Promise<ApiToken> {
-    const apiToken = await this.get(tokenUpdate.id)
+    return repository.executeTransaction(async (entityManager) => {
+      const apiTokenRepository = entityManager.getRepository(ApiToken)
+      const apiToken = await this.get(tokenUpdate.id, apiTokenRepository)
 
-    apiToken.name = tokenUpdate.name
-    apiToken.comment = tokenUpdate.comment
+      apiToken.name = tokenUpdate.name
+      apiToken.description = tokenUpdate.description
 
-    return repository.apiTokens.save(apiToken)
+      return apiTokenRepository.save(apiToken)
+    })
   }
 
   /**
@@ -107,7 +90,13 @@ export default class ApiTokenService {
    * @throws {@link OpenArtifactoryError} if not found
    */
   public static async revoke(id: number) {
-    const apiToken = await this.get(id)
-    return repository.apiTokens.remove(apiToken)
+    return repository.executeTransaction(async (entityManager) => {
+      const apiTokenRepository = await entityManager.getRepository(ApiToken)
+      const apiToken = await this.get(id, apiTokenRepository)
+
+      await apiTokenRepository.remove(apiToken)
+
+      return apiToken
+    })
   }
 }

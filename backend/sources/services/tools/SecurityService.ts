@@ -19,6 +19,14 @@ export default class SecurityService {
   private static otpSecret: string
 
   /**
+   * Gets otpSecretStatus. If ready, return true, false otherwise
+   * @throws {@link OpenArtifactoryError} if secret is already set
+   */
+  public static get otpStatus(): boolean {
+    return !!this.otpSecret
+  }
+
+  /**
    * Checks if otpSecret is set or not
    * @throws {@link OpenArtifactoryError} if secret is already set
    */

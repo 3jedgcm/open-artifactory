@@ -44,7 +44,7 @@ import { Id } from '../../model/httpEntites/primitivesHttpEnties'
 export class ApiTokenController extends Controller {
   /**
    * Gets API token metadata list
-   * @summary Get API token list
+   * @summary Gets API token list
    */
   @SuccessResponse(200, 'API token list')
   @Example<ApiTokensResponse>({
@@ -107,7 +107,7 @@ export class ApiTokenController extends Controller {
    * @summary Generates API token
    * @param tokenRequest token generation parameters
    */
-  @SuccessResponse(201, 'API token creation')
+  @SuccessResponse(201, 'Created API token')
   @Example<ApiTokenCreateResponse>({
     httpCode: 200,
     error: false,
@@ -146,16 +146,16 @@ export class ApiTokenController extends Controller {
   }
 
   /**
-   * Edits API token metadata
+   * Update API token metadata
    * @summary Edits API token
    * @param id token id to edit
    * @param tokenUpdate token metadata to set
    */
-  @SuccessResponse(200, 'API token edited')
+  @SuccessResponse(200, 'Updated API token')
   @Example<ApiTokenResponse>({
     httpCode: 200,
     error: false,
-    message: '#1 api token edited',
+    message: '#1 api token updated',
     apiToken: apiTokenExample
   })
   @Response<ErrorHttpResponse>(422, 'Validation failed error', {
@@ -170,7 +170,7 @@ export class ApiTokenController extends Controller {
     }
   })
   @Put('{id}')
-  public async edit(@Path() id: Id, @Body() tokenUpdate: ApiTokenEditHttpEntity)
+  public async update(@Path() id: Id, @Body() tokenUpdate: ApiTokenEditHttpEntity)
     : Promise<ApiTokenResponse> {
     const apiToken = mapper.map(tokenUpdate, ApiTokenCreateHttpEntity, ApiToken)
     apiToken.id = id
@@ -179,7 +179,7 @@ export class ApiTokenController extends Controller {
     return {
       httpCode: 200,
       error: false,
-      message: `#${result.id} api token edited`,
+      message: `#${result.id} api token updated`,
       apiToken: result
     }
   }
@@ -189,7 +189,7 @@ export class ApiTokenController extends Controller {
    * @summary Revokes API token
    * @param id token id to revoke
    */
-  @SuccessResponse(200, 'API token deleted')
+  @SuccessResponse(200, 'Deleted API token')
   @Example<ApiTokenResponse>({
     httpCode: 200,
     error: false,

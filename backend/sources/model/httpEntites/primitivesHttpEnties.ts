@@ -12,8 +12,22 @@ export type Uuid = string
 export type FileName = string
 
 /**
- * Id
+ * File comment
+ * @example "This is a comment"
+ */
+export type Comment = string
+
+/**
+ * Identifier
  * @isInt Id must be an integer
  * @example 1
+ * @minimum 1 Id must be positive
  */
 export type Id = number
+
+/**
+ * Hexadecimal color
+ * @pattern #[0-9A-Za-z]{6} 'color' is invalid
+ * @example #1A2B3C
+ */
+export type Color = string

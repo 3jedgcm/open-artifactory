@@ -18,13 +18,13 @@ import ErrorHttpResponse from '../../model/httpResponses/ErrorResponse'
   message: 'Forbidden',
   error: true
 })
-@Tags('Init')
-@Route('init')
-export class InitController extends Controller {
+@Tags('Setup')
+@Route('setup')
+export class SetupController extends Controller {
   /**
    * Generates a new One-Time Password secret
    * Return a 403 error if OTP secret is already set
-   * @summary Get initialization data
+   * @summary Gets initialization data
    */
   @SuccessResponse(200, 'One-Time Password secret')
   @Example<OtpInitHttpResponse>({
@@ -54,8 +54,8 @@ export class InitController extends Controller {
   /**
    * Saves OTP configuration
    * Returns a 403 error if OTP secret is already set
-   * Returns a 401 error if OTP token doesn"t match with OTP secret
-   * @summary Save initialization data
+   * Returns a 401 error if OTP token doesn't match with OTP secret
+   * @summary Saves initialization data
    * @param otpInit One-Time Password settings
    */
   @SuccessResponse(200, 'Bearer token')
