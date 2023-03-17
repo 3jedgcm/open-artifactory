@@ -1,4 +1,4 @@
-import { AutoMap } from '@automapper/classes'
+import { Id } from '../primitivesHttpEnties'
 
 /**
  * File entity model for update
@@ -6,15 +6,25 @@ import { AutoMap } from '@automapper/classes'
 export default class FileUpdateHttpEntity {
   /**
    * New file name
-   * @pattern [\S\s]+[\S]+ 'name' is required
+   * @pattern .*[\S\s].* 'name' is required
    * @example "picture.jpg"
    */
-  @AutoMap()
-    name!: string
+  name!: string
 
   /**
    * New file comment (optional)
    * @example "This is a comment"
    */
   comment?: string | null
+
+  /**
+   * New group id (optional)
+   * @example "1"
+   */
+  groupId?: Id | null
+
+  /**
+   * New badge id list (optional)
+   */
+  badgeIds?: Id[] | null
 }

@@ -1,5 +1,5 @@
-import HttpResponse from './HttpResponse'
-import StorageHttpEntity from '../httpEntites/StorageHttpEntity'
+import HttpResponse from '../HttpResponse'
+import StorageHttpEntity from '../../httpEntites/file/StorageHttpEntity'
 
 /**
  * Storage data response entity

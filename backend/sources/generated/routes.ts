@@ -5,11 +5,17 @@ import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, H
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ApiTokenController } from './../api/controllers/ApiTokenController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { BadgesController } from './../api/controllers/BadgesController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FilesController } from './../api/controllers/FilesController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { InitController } from './../api/controllers/InitController';
+import { GroupsController } from './../api/controllers/GroupsController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { LoginController } from './../api/controllers/LoginController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { SetupController } from './../api/controllers/SetupController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { StatusController } from './../api/controllers/StatusController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UploadController } from './../api/controllers/UploadController';
 import { expressAuthentication } from './../api/middlewares/tsoaAuthenticationMiddleware';
@@ -35,7 +41,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Id": {
         "dataType": "refAlias",
-        "type": {"dataType":"integer","validators":{"isInt":{"errorMsg":"Id must be an integer"}}},
+        "type": {"dataType":"integer","validators":{"isInt":{"errorMsg":"Id must be an integer"},"minimum":{"errorMsg":"Id must be positive","value":1}}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ApiTokenHttpEntity": {
@@ -43,9 +49,10 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": {"ref":"Id","required":true},
             "name": {"dataType":"string","required":true},
-            "comment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "expireAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
             "createdAt": {"dataType":"datetime","required":true},
+            "updateAt": {"dataType":"datetime","required":true},
             "isValid": {"dataType":"boolean","required":true},
         },
         "additionalProperties": false,
@@ -89,8 +96,8 @@ const models: TsoaRoute.Models = {
     "ApiTokenCreateHttpEntity": {
         "dataType": "refObject",
         "properties": {
-            "name": {"dataType":"string","required":true,"validators":{"pattern":{"errorMsg":"'name' is required","value":"[\\S\\s]+[\\S]+"}}},
-            "comment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "name": {"dataType":"string","required":true,"validators":{"pattern":{"errorMsg":"'name' is required","value":".*[\\S\\s].*"}}},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "expireAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}]},
         },
         "additionalProperties": false,
@@ -99,8 +106,59 @@ const models: TsoaRoute.Models = {
     "ApiTokenEditHttpEntity": {
         "dataType": "refObject",
         "properties": {
-            "name": {"dataType":"string","required":true,"validators":{"pattern":{"errorMsg":"'name' is required","value":"[\\S\\s]+[\\S]+"}}},
-            "comment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "name": {"dataType":"string","required":true,"validators":{"pattern":{"errorMsg":"'name' is required","value":".*[\\S\\s].*"}}},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Color": {
+        "dataType": "refAlias",
+        "type": {"dataType":"string","validators":{"pattern":{"errorMsg":"'color' is invalid","value":"#[0-9A-Za-z]{6}"}}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BadgeHttpEntity": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"ref":"Id","required":true},
+            "name": {"dataType":"string","required":true},
+            "color": {"ref":"Color","required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updateAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BadgesHttpResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "httpCode": {"dataType":"double","required":true},
+            "error": {"dataType":"boolean","required":true},
+            "message": {"dataType":"string","required":true},
+            "count": {"dataType":"double","required":true},
+            "badges": {"dataType":"array","array":{"dataType":"refObject","ref":"BadgeHttpEntity"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BadgeHttpResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "httpCode": {"dataType":"double","required":true},
+            "error": {"dataType":"boolean","required":true},
+            "message": {"dataType":"string","required":true},
+            "badge": {"ref":"BadgeHttpEntity","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BadgeCreateUpdateHttpEntity": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true,"validators":{"pattern":{"errorMsg":"'name' is required","value":".*[\\S\\s].*"}}},
+            "color": {"ref":"Color","required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
         },
         "additionalProperties": false,
     },
@@ -108,6 +166,18 @@ const models: TsoaRoute.Models = {
     "Uuid": {
         "dataType": "refAlias",
         "type": {"dataType":"string","validators":{"pattern":{"value":"[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}"}}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GroupHttpEntity": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"ref":"Id","required":true},
+            "name": {"dataType":"string","required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updateAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileHttpEntity": {
@@ -121,6 +191,9 @@ const models: TsoaRoute.Models = {
             "hash": {"dataType":"string","required":true},
             "downloadCount": {"dataType":"double","required":true},
             "createdAt": {"dataType":"datetime","required":true},
+            "updateAt": {"dataType":"datetime","required":true},
+            "group": {"dataType":"union","subSchemas":[{"ref":"GroupHttpEntity"},{"dataType":"enum","enums":[null]}],"required":true},
+            "badges": {"dataType":"array","array":{"dataType":"refObject","ref":"BadgeHttpEntity"},"required":true},
             "url": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
@@ -181,20 +254,42 @@ const models: TsoaRoute.Models = {
     "FileUpdateHttpEntity": {
         "dataType": "refObject",
         "properties": {
-            "name": {"dataType":"string","required":true,"validators":{"pattern":{"errorMsg":"'name' is required","value":"[\\S\\s]+[\\S]+"}}},
+            "name": {"dataType":"string","required":true,"validators":{"pattern":{"errorMsg":"'name' is required","value":".*[\\S\\s].*"}}},
             "comment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "groupId": {"dataType":"union","subSchemas":[{"ref":"Id"},{"dataType":"enum","enums":[null]}]},
+            "badgeIds": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"Id"}},{"dataType":"enum","enums":[null]}]},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "OtpInitHttpResponse": {
+    "GroupsHttpResponse": {
         "dataType": "refObject",
         "properties": {
             "httpCode": {"dataType":"double","required":true},
             "error": {"dataType":"boolean","required":true},
             "message": {"dataType":"string","required":true},
-            "otpSecret": {"dataType":"string","required":true},
-            "otpUrl": {"dataType":"string","required":true},
+            "count": {"dataType":"double","required":true},
+            "groups": {"dataType":"array","array":{"dataType":"refObject","ref":"GroupHttpEntity"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GroupHttpResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "httpCode": {"dataType":"double","required":true},
+            "error": {"dataType":"boolean","required":true},
+            "message": {"dataType":"string","required":true},
+            "group": {"ref":"GroupHttpEntity","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GroupCreateUpdateHttpEntity": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true,"validators":{"pattern":{"errorMsg":"'name' is required","value":".*[\\S\\s].*"}}},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
         },
         "additionalProperties": false,
     },
@@ -211,19 +306,42 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "OtpInitHttpEntity": {
-        "dataType": "refObject",
-        "properties": {
-            "otpToken": {"dataType":"string","required":true,"validators":{"pattern":{"value":"[0-9]{6}"}}},
-            "otpSecret": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "OtpLoginHttpEntity": {
         "dataType": "refObject",
         "properties": {
             "otpToken": {"dataType":"string","required":true,"validators":{"pattern":{"value":"[0-9]{6}"}}},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OtpInitHttpResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "httpCode": {"dataType":"double","required":true},
+            "error": {"dataType":"boolean","required":true},
+            "message": {"dataType":"string","required":true},
+            "otpSecret": {"dataType":"string","required":true},
+            "otpUrl": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OtpInitHttpEntity": {
+        "dataType": "refObject",
+        "properties": {
+            "otpToken": {"dataType":"string","required":true,"validators":{"pattern":{"value":"[0-9]{6}"}}},
+            "otpSecret": {"dataType":"string","required":true,"validators":{"pattern":{"errorMsg":"'otpSecret' is required","value":".*[\\S\\s].*"}}},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "StatusHttpResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "httpCode": {"dataType":"double","required":true},
+            "error": {"dataType":"boolean","required":true},
+            "message": {"dataType":"string","required":true},
+            "ready": {"dataType":"boolean","required":true},
         },
         "additionalProperties": false,
     },
@@ -318,9 +436,9 @@ export function RegisterRoutes(app: Router) {
         app.put('/tokens/:id',
             authenticateMiddleware([{"bearer":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ApiTokenController)),
-            ...(fetchMiddlewares<RequestHandler>(ApiTokenController.prototype.edit)),
+            ...(fetchMiddlewares<RequestHandler>(ApiTokenController.prototype.update)),
 
-            function ApiTokenController_edit(request: any, response: any, next: any) {
+            function ApiTokenController_update(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"ref":"Id"},
                     tokenUpdate: {"in":"body","name":"tokenUpdate","required":true,"ref":"ApiTokenEditHttpEntity"},
@@ -335,7 +453,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new ApiTokenController();
 
 
-              const promise = controller.edit.apply(controller, validatedArgs as any);
+              const promise = controller.update.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, 200, next);
             } catch (err) {
                 return next(err);
@@ -362,6 +480,136 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.revoke.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/badges',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController)),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController.prototype.getList)),
+
+            function BadgesController_getList(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new BadgesController();
+
+
+              const promise = controller.getList.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/badges/:id',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController)),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController.prototype.get)),
+
+            function BadgesController_get(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"ref":"Id"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new BadgesController();
+
+
+              const promise = controller.get.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/badges',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController)),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController.prototype.create)),
+
+            function BadgesController_create(request: any, response: any, next: any) {
+            const args = {
+                    toCreate: {"in":"body","name":"toCreate","required":true,"ref":"BadgeCreateUpdateHttpEntity"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new BadgesController();
+
+
+              const promise = controller.create.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/badges/:id',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController)),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController.prototype.update)),
+
+            function BadgesController_update(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"ref":"Id"},
+                    toUpdate: {"in":"body","name":"toUpdate","required":true,"ref":"BadgeCreateUpdateHttpEntity"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new BadgesController();
+
+
+              const promise = controller.update.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/badges/:id',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController)),
+            ...(fetchMiddlewares<RequestHandler>(BadgesController.prototype.delete)),
+
+            function BadgesController_delete(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"ref":"Id"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new BadgesController();
+
+
+              const promise = controller.delete.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, 200, next);
             } catch (err) {
                 return next(err);
@@ -412,7 +660,7 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.getStorage.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              promiseHandler(controller, promise, response, 200, next);
             } catch (err) {
                 return next(err);
             }
@@ -522,11 +770,12 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/init',
-            ...(fetchMiddlewares<RequestHandler>(InitController)),
-            ...(fetchMiddlewares<RequestHandler>(InitController.prototype.getOtpSecret)),
+        app.get('/groups',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController)),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController.prototype.getList)),
 
-            function InitController_getOtpSecret(request: any, response: any, next: any) {
+            function GroupsController_getList(request: any, response: any, next: any) {
             const args = {
             };
 
@@ -536,23 +785,24 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = getValidatedArgs(args, request, response);
 
-                const controller = new InitController();
+                const controller = new GroupsController();
 
 
-              const promise = controller.getOtpSecret.apply(controller, validatedArgs as any);
+              const promise = controller.getList.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, 200, next);
             } catch (err) {
                 return next(err);
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/init',
-            ...(fetchMiddlewares<RequestHandler>(InitController)),
-            ...(fetchMiddlewares<RequestHandler>(InitController.prototype.SaveOtpSecret)),
+        app.get('/groups/:id',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController)),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController.prototype.get)),
 
-            function InitController_SaveOtpSecret(request: any, response: any, next: any) {
+            function GroupsController_get(request: any, response: any, next: any) {
             const args = {
-                    otpInit: {"in":"body","name":"otpInit","required":true,"ref":"OtpInitHttpEntity"},
+                    id: {"in":"path","name":"id","required":true,"ref":"Id"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -561,10 +811,89 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = getValidatedArgs(args, request, response);
 
-                const controller = new InitController();
+                const controller = new GroupsController();
 
 
-              const promise = controller.SaveOtpSecret.apply(controller, validatedArgs as any);
+              const promise = controller.get.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/groups',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController)),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController.prototype.create)),
+
+            function GroupsController_create(request: any, response: any, next: any) {
+            const args = {
+                    toCreate: {"in":"body","name":"toCreate","required":true,"ref":"GroupCreateUpdateHttpEntity"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new GroupsController();
+
+
+              const promise = controller.create.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/groups/:id',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController)),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController.prototype.update)),
+
+            function GroupsController_update(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"ref":"Id"},
+                    toUpdate: {"in":"body","name":"toUpdate","required":true,"ref":"GroupCreateUpdateHttpEntity"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new GroupsController();
+
+
+              const promise = controller.update.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/groups/:id',
+            authenticateMiddleware([{"bearer":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController)),
+            ...(fetchMiddlewares<RequestHandler>(GroupsController.prototype.delete)),
+
+            function GroupsController_delete(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"ref":"Id"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new GroupsController();
+
+
+              const promise = controller.delete.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, 200, next);
             } catch (err) {
                 return next(err);
@@ -596,6 +925,79 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/setup',
+            ...(fetchMiddlewares<RequestHandler>(SetupController)),
+            ...(fetchMiddlewares<RequestHandler>(SetupController.prototype.getOtpSecret)),
+
+            function SetupController_getOtpSecret(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new SetupController();
+
+
+              const promise = controller.getOtpSecret.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/setup',
+            ...(fetchMiddlewares<RequestHandler>(SetupController)),
+            ...(fetchMiddlewares<RequestHandler>(SetupController.prototype.SaveOtpSecret)),
+
+            function SetupController_SaveOtpSecret(request: any, response: any, next: any) {
+            const args = {
+                    otpInit: {"in":"body","name":"otpInit","required":true,"ref":"OtpInitHttpEntity"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new SetupController();
+
+
+              const promise = controller.SaveOtpSecret.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/status',
+            ...(fetchMiddlewares<RequestHandler>(StatusController)),
+            ...(fetchMiddlewares<RequestHandler>(StatusController.prototype.get)),
+
+            function StatusController_get(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new StatusController();
+
+
+              const promise = controller.get.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/upload',
             authenticateMiddleware([{"bearer":[]}]),
             upload.single('file'),
@@ -607,6 +1009,8 @@ export function RegisterRoutes(app: Router) {
                     file: {"in":"formData","name":"file","required":true,"dataType":"file"},
                     name: {"in":"formData","name":"name","dataType":"string"},
                     comment: {"in":"formData","name":"comment","dataType":"string"},
+                    groupId: {"in":"formData","name":"groupId","dataType":"string"},
+                    badgeIds: {"in":"formData","name":"badgeIds","dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

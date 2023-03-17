@@ -16,7 +16,7 @@ import File from '../../model/entities/File'
 import FileHttpResponse from '../../model/httpResponses/file/FileHttpResponse'
 import FileHttpEntity from '../../model/httpEntites/file/FileHttpEntity'
 import ErrorHttpResponse from '../../model/httpResponses/ErrorResponse'
-import { FileName } from '../../model/httpEntites/primitivesHttpEnties'
+import { Comment, FileName, Id } from '../../model/httpEntites/primitivesHttpEnties'
 import { fileExample } from '../openApiExamples'
 
 @Response<ErrorHttpResponse>(500, 'Internal server error', {
@@ -35,6 +35,8 @@ export class UploadController extends Controller {
    * @param file file to upload
    * @param name optional file name
    * @param comment optional file comment
+   * @param groupId optional group identifier
+   * @param badgeIds optional badge identifiers list
    */
   @SuccessResponse(201, 'Created file entity')
   @Example<FileHttpResponse>(
@@ -56,6 +58,11 @@ export class UploadController extends Controller {
       }
     }
   })
+  @Response<ErrorHttpResponse>(404, 'Unknown id', {
+    httpCode: 404,
+    message: '#1 group not found',
+    error: true
+  })
   @Response<ErrorHttpResponse>(401, 'Unauthorized', {
     httpCode: 401,
     message: 'Unauthorized',
@@ -65,7 +72,9 @@ export class UploadController extends Controller {
   public async upload(
     @UploadedFile() file: Express.Multer.File,
       @FormField() name?: FileName,
-      @FormField() comment?: FileName
+      @FormField() comment?: Comment,
+      @FormField() groupId?: Id,
+      @FormField() badgeIds?: Id[]
   )
       : Promise<FileHttpResponse> {
     let fileName: string | undefined
@@ -74,7 +83,7 @@ export class UploadController extends Controller {
     }
 
     const fileEntity = mapper.map(
-      await FileService.upload(file, fileName, comment),
+      await FileService.upload(file, fileName, comment, groupId, badgeIds ?? []),
       File,
       FileHttpEntity
     )

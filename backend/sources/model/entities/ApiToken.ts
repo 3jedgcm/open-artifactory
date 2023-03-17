@@ -1,5 +1,5 @@
 import {
-  Column, CreateDateColumn, Entity, PrimaryGeneratedColumn
+  Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm'
 import { AutoMap } from '@automapper/classes'
 
@@ -29,31 +29,24 @@ export default class ApiToken {
     name!: string
 
   /**
-   * Token comment
+   * Token description
    */
   @Column({
     type: 'text',
-    transformer: {
-      to(value) {
-        return value || ''
-      },
-      from(value) {
-        return value || null
-      }
-    }
+    nullable: true
   })
-    comment!: string | null
+  @AutoMap()
+    description!: string | null
 
   /**
    * Token expiration date (Can be null, never expire in this case)
    */
   @Column({
-    type: 'date',
-    nullable: true,
-    default: undefined
+    type: 'datetime',
+    nullable: true
   })
   @AutoMap()
-    expireAt?: Date
+    expireAt!: Date | null
 
   /**
    * Token creation date
@@ -61,6 +54,13 @@ export default class ApiToken {
   @CreateDateColumn()
   @AutoMap()
     createdAt!: Date
+
+  /**
+   * Token updating date
+   */
+  @UpdateDateColumn()
+  @AutoMap()
+    updateAt!: Date
 
   /**
    * Token status

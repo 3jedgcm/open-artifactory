@@ -1,4 +1,4 @@
-import { QueryRunner } from 'typeorm'
+import { Repository } from 'typeorm'
 import fs from 'fs'
 import { v4 } from 'uuid'
 import * as crypto from 'crypto'
@@ -6,12 +6,15 @@ import diskusage from 'diskusage-ng'
 import path from 'path'
 import getFolderSize from 'get-folder-size'
 import File from '../../model/entities/File'
-import repository from '../datasource/repository'
+import repository from '../dataSource/repository'
 import OpenArtifactoryError from '../../model/errors/OpenArtifactoryError'
-import datasource from '../datasource'
 import { Uuid } from '../../model/httpEntites/primitivesHttpEnties'
 import constants from '../../constants'
-import StorageHttpEntity from '../../model/httpEntites/StorageHttpEntity'
+import StorageHttpEntity from '../../model/httpEntites/file/StorageHttpEntity'
+import GroupService from './GroupService'
+import Badge from '../../model/entities/Badge'
+import BadgeService from './BadgeService'
+import Group from '../../model/entities/Group'
 
 /**
  * Service to manage file entities
@@ -23,59 +26,37 @@ export default class FileService {
    * @return {@link File}[] File entity array
    */
   public static async getList(): Promise<File[]> {
-    let queryRunner!: QueryRunner
-    try {
-      queryRunner = datasource.createQueryRunner()
-      await queryRunner.connect()
-      await queryRunner.startTransaction()
+    return repository.executeTransaction(async (entityManager) => {
+      const fileRepository = entityManager.getRepository(File)
 
-      const files = await queryRunner.manager.find(File)
-      files.filter((file) => {
+      const files = await fileRepository.find({
+        relations: {
+          badges: true,
+          group: true
+        }
+      })
+
+      return files.filter((file) => {
         if (!fs.existsSync(file.path)) {
-          queryRunner.manager.remove(file)
+          fileRepository.remove(file)
           return false
         }
         return true
       })
-      await queryRunner.commitTransaction()
-
-      return files
-    } catch (error) {
-      if (queryRunner && queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction()
-      }
-      throw error
-    } finally {
-      if (queryRunner) {
-        await queryRunner.release()
-      }
-    }
+    })
   }
 
   /**
-   * Gets file entity by uuid
+   * Gets file for download endpoint
+   * Increment file download counter
    * @param uuid selected file uuid
-   * @param incrementDownloadCount set true to increment download counter, default false
-   * @return {@link File} selected file entity
    * @throws {@link OpenArtifactoryError} if uuid does not exist in database
    */
-  public static async get(uuid: Uuid, incrementDownloadCount = false): Promise<File> {
-    const fileEntity = await repository.files.findOneBy({ uuid })
-
-    if (fileEntity) {
-      if (fs.existsSync(fileEntity.path)) {
-        if (incrementDownloadCount) {
-          fileEntity.downloadCount += 1
-          await repository.files.save(fileEntity)
-        }
-        return fileEntity
-      }
-
-      // Cleaning db if file not found
-      await repository.files.remove(fileEntity)
-    }
-
-    throw new OpenArtifactoryError(404, `${uuid} not found`)
+  public static async download(uuid: Uuid) {
+    return repository.executeTransaction(async (entityManager) => {
+      const fileEntity = this.get(uuid, entityManager.getRepository(File), true, false)
+      return fileEntity
+    })
   }
 
   /**
@@ -83,25 +64,28 @@ export default class FileService {
    * @param uploadedFile Multer file to upload
    * @param name optional file name, if not set, original name is used
    * @param comment optional file comment
+   * @param groupId optional file group identifier
+   * @param badgeIds optional file badge identifier list
    * @return {@link File} uploaded file entity
-   * @throws {@link OpenArtifactoryError} if an error occur during upload
+   * @throws {@link OpenArtifactoryError} if an error occurs during upload
    */
   public static async upload(
     uploadedFile: Express.Multer.File,
     name?: string,
-    comment?: string
+    comment?: string,
+    groupId?: number | null,
+    badgeIds?: number[] | null
   ): Promise<File> {
-    let fileEntity: File
-    let queryRunner!: QueryRunner
-
     const storageData = await this.getStorageData()
 
     if (storageData.availableSpace < uploadedFile.size) {
-      throw new OpenArtifactoryError(500, 'Disk space not available')
+      throw new OpenArtifactoryError(500, 'Not enough storage space')
     }
 
-    try {
-      fileEntity = repository.files.create()
+    return repository.executeTransaction(async (entityManager) => {
+      const fileRepository = entityManager.getRepository(File)
+
+      let fileEntity = fileRepository.create()
       fileEntity.size = uploadedFile.size
       fileEntity.mimeType = uploadedFile.mimetype
       fileEntity.hash = crypto.createHash('md5')
@@ -111,75 +95,66 @@ export default class FileService {
       fileEntity.name = name ?? uploadedFile.originalname
       fileEntity.comment = comment && comment.trim().length > 0 ? comment : null
 
-      queryRunner = datasource.createQueryRunner()
-      await queryRunner.connect()
-      await queryRunner.startTransaction()
+      fileEntity.group = groupId
+        ? await GroupService.get(groupId, entityManager.getRepository(Group)) : null
+      fileEntity.badges = badgeIds && badgeIds.length > 0
+        ? await BadgeService.getListById(badgeIds, entityManager.getRepository(Badge)) : []
 
-      fileEntity = await queryRunner.manager.save(fileEntity)
+      fileEntity = await fileRepository.save(fileEntity)
 
       if (!fs.existsSync(constants.filesFolderPath)) {
         fs.mkdirSync(constants.filesFolderPath)
       }
       fs.writeFileSync(fileEntity.path, uploadedFile.buffer)
 
-      await queryRunner.commitTransaction()
-    } catch (error) {
-      if (queryRunner && queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction()
-      }
-
-      throw new OpenArtifactoryError(
-        500,
-        'An errors occur during file upload',
-        error
-      )
-    } finally {
-      if (queryRunner) {
-        await queryRunner.release()
-      }
-    }
-
-    return fileEntity
+      return fileEntity
+    })
   }
 
   /**
    * Changes file uuid
    * @param uuid selected file uuid
    * @return {@link File} updated file entity
-   * @throws {@link OpenArtifactoryError} if an error occur
+   * @throws {@link OpenArtifactoryError} if an error occurs
    */
   public static async changeUuid(uuid: Uuid): Promise<File> {
-    let fileEntity = await this.get(uuid)
-    let queryRunner!: QueryRunner
-
-    try {
-      queryRunner = datasource.createQueryRunner()
-      await queryRunner.connect()
-      await queryRunner.startTransaction()
+    return repository.executeTransaction(async (entityManager) => {
+      const fileRepository = entityManager.getRepository(File)
+      let fileEntity = await this.get(uuid, fileRepository)
 
       const oldPath = fileEntity.path
       fileEntity.uuid = v4()
-      fileEntity = await queryRunner.manager.save(fileEntity)
 
+      fileEntity = await fileRepository.save(fileEntity)
       fs.renameSync(oldPath, fileEntity.path)
-      await queryRunner.commitTransaction()
-    } catch (error) {
-      if (queryRunner && queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction()
-      }
+      return fileEntity
+    })
+  }
 
-      throw new OpenArtifactoryError(
-        500,
-        'An errors occur during uuid change',
-        error
-      )
-    } finally {
-      if (queryRunner) {
-        await queryRunner.release()
-      }
-    }
+  /**
+   * Updates file entity
+   * @param toUpdate new file data to set
+   * @return {@link File} Updated file entity
+   * @throws {@link OpenArtifactoryError} if uuid, group or badge does not exist in database
+   * or groupId/BadgeId not found
+   */
+  public static async update(toUpdate: File): Promise<File> {
+    return repository.executeTransaction(async (entityManager) => {
+      const fileRepository = entityManager.getRepository(File)
+      const fileEntity = await this.get(toUpdate.uuid, fileRepository, false, true)
 
-    return fileEntity
+      fileEntity.name = toUpdate.name
+      fileEntity.comment = toUpdate.comment
+      fileEntity.group = toUpdate.group
+        ? await GroupService.get(toUpdate.group.id, entityManager.getRepository(Group)) : null
+      fileEntity.badges = toUpdate.badges.length > 0
+        ? await BadgeService.getListById(
+          toUpdate.badges.map((badge) => badge.id),
+          entityManager.getRepository(Badge)
+        ) : []
+
+      return fileRepository.save(fileEntity)
+    })
   }
 
   /**
@@ -189,33 +164,23 @@ export default class FileService {
    * @throws {@link OpenArtifactoryError} if uuid does not exist in database
    */
   public static async delete(uuid: Uuid): Promise<File> {
-    const fileEntity = await this.get(uuid)
+    return repository.executeTransaction(async (entityManager) => {
+      const fileRepository = entityManager.getRepository(File)
+      const fileEntity = await this.get(uuid, fileRepository)
 
-    if (fs.existsSync(fileEntity.path)) {
-      fs.unlinkSync(fileEntity.path)
-    }
+      if (fs.existsSync(fileEntity.path)) {
+        fs.unlinkSync(fileEntity.path)
+      }
+      await fileRepository.remove(fileEntity)
 
-    return repository.files.remove(fileEntity)
-  }
-
-  /**
-   * Updates file entity
-   * @param updatedFile new file data to set
-   * @return {@link File} Updated file entity
-   * @throws {@link OpenArtifactoryError} if uuid does not exist in database
-   */
-  public static async update(updatedFile: File): Promise<File> {
-    const fileEntity = await this.get(updatedFile.uuid)
-
-    fileEntity.name = updatedFile.name
-    fileEntity.comment = updatedFile.comment
-
-    return repository.files.save(fileEntity)
+      return fileEntity
+    })
   }
 
   /**
    * Computes storage sizes and return values
    * @return {@link StorageHttpEntity} with disk data
+   * @throws {@link Error} if an error occurs during folder size reading
    */
   public static async getStorageData(): Promise<StorageHttpEntity> {
     type Usage = { readonly total: number, readonly used: number, readonly available: number }
@@ -259,6 +224,46 @@ export default class FileService {
       }
     }
 
-    throw new Error('Error during read folder size')
+    throw new Error('Error occurred while reading folder size')
+  }
+
+  /**
+   * Gets file entity by uuid
+   * Should be call in a transaction (see repository.executeTransaction method)
+   * @param uuid selected file uuid
+   * @param fileRepository repository to use for database operation
+   * @param incrementDownloadCount set true to increment download counter, default false
+   * @param includeRelations set true to include related entity in result, default false
+   * @return {@link File} selected file entity
+   * @throws {@link OpenArtifactoryError} if uuid does not exist in database
+   * @private
+   */
+  private static async get(
+    uuid: Uuid,
+    fileRepository: Repository<File>,
+    incrementDownloadCount = false,
+    includeRelations = false
+  ): Promise<File> {
+    const fileEntity = await fileRepository.findOne({
+      where: { uuid },
+      relations: {
+        group: includeRelations,
+        badges: includeRelations
+      }
+    })
+    if (fileEntity) {
+      if (fs.existsSync(fileEntity.path)) {
+        if (incrementDownloadCount) {
+          fileEntity.downloadCount += 1
+          await fileRepository.save(fileEntity)
+        }
+        return fileEntity
+      }
+
+      // Cleaning db if file not found
+      await fileRepository.remove(fileEntity)
+    }
+
+    throw new OpenArtifactoryError(404, `${uuid} not found`)
   }
 }

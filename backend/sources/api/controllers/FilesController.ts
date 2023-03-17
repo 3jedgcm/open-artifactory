@@ -26,7 +26,7 @@ import FileUpdateHttpEntity from '../../model/httpEntites/file/FileUpdateHttpEnt
 import { Uuid } from '../../model/httpEntites/primitivesHttpEnties'
 import ErrorHttpResponse from '../../model/httpResponses/ErrorResponse'
 import { fileExample, storageExample } from '../openApiExamples'
-import StorageHttpResponse from '../../model/httpResponses/StorageHttpResponse'
+import StorageHttpResponse from '../../model/httpResponses/file/StorageHttpResponse'
 
 @Response<ErrorHttpResponse>(500, 'Internal server error', {
   httpCode: 500,
@@ -73,6 +73,7 @@ export class FilesController extends Controller {
    * Gets storage data
    * @summary Gets storage data
    */
+  @SuccessResponse(200, 'Storage details')
   @Response<ErrorHttpResponse>(401, 'Unauthorized', {
     httpCode: 401,
     message: 'Unauthorized',
@@ -111,7 +112,7 @@ export class FilesController extends Controller {
   @NoSecurity()
   @Get('{uuid}')
   public async download(@Path() uuid: Uuid): Promise<ReadStream> {
-    const file = await FileService.get(uuid, true)
+    const file = await FileService.download(uuid)
 
     this.setHeader('Content-Type', file.mimeType)
     this.setHeader('Content-Length', file.size.toString())
@@ -132,7 +133,7 @@ export class FilesController extends Controller {
     file: fileExample
   })
   @Response<ErrorHttpResponse>(404, 'Unknown uuid', {
-    httpCode: 422,
+    httpCode: 404,
     message: '4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found',
     error: true
   })
@@ -167,7 +168,7 @@ export class FilesController extends Controller {
     file: fileExample
   })
   @Response<ErrorHttpResponse>(404, 'Unknown uuid', {
-    httpCode: 422,
+    httpCode: 404,
     message: '4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found',
     error: true
   })
@@ -216,7 +217,7 @@ export class FilesController extends Controller {
     file: fileExample
   })
   @Response<ErrorHttpResponse>(404, 'Unknown uuid', {
-    httpCode: 422,
+    httpCode: 404,
     message: '4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found',
     error: true
   })

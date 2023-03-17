@@ -1,22 +1,19 @@
-import { AutoMap } from '@automapper/classes'
-
 /**
  * API Token creation entity model
  */
 export default class ApiTokenCreateHttpEntity {
   /**
    * Token name
-   * @pattern [\S\s]+[\S]+ 'name' is required
+   * @pattern .*[\S\s].* 'name' is required
    * @example "API key for CI"
    */
-  @AutoMap()
-    name!: string
+  name!: string
 
   /**
-   * Token comment (optional)
-   * @example "This is a comment"
+   * Token description (optional)
+   * @example "This is a description"
    */
-  comment?: string | null
+  description?: string | null
 
   /**
    * Token expiration date (optional)

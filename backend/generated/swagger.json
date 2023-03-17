@@ -42,7 +42,8 @@
 				"type": "integer",
 				"format": "int32",
 				"example": 1,
-				"description": "Id"
+				"description": "Identifier",
+				"minimum": 1
 			},
 			"ApiTokenHttpEntity": {
 				"description": "API Token entity model",
@@ -56,11 +57,11 @@
 						"description": "Token name",
 						"example": "API key for CI"
 					},
-					"comment": {
+					"description": {
 						"type": "string",
 						"nullable": true,
-						"description": "Token comment (optional)",
-						"example": "This is a comment"
+						"description": "Token description (optional)",
+						"example": "This is a description"
 					},
 					"expireAt": {
 						"type": "string",
@@ -75,6 +76,12 @@
 						"description": "Token creation date",
 						"example": "2023-01-01T00:00:00.000Z"
 					},
+					"updateAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Token updating date",
+						"example": "2023-01-01T00:00:00.000Z"
+					},
 					"isValid": {
 						"type": "boolean",
 						"description": "ValidityStatus"
@@ -83,9 +90,10 @@
 				"required": [
 					"id",
 					"name",
-					"comment",
+					"description",
 					"expireAt",
 					"createdAt",
+					"updateAt",
 					"isValid"
 				],
 				"type": "object",
@@ -212,13 +220,13 @@
 						"type": "string",
 						"description": "Token name",
 						"example": "API key for CI",
-						"pattern": "[\\S\\s]+[\\S]+"
+						"pattern": ".*[\\S\\s].*"
 					},
-					"comment": {
+					"description": {
 						"type": "string",
 						"nullable": true,
-						"description": "Token comment (optional)",
-						"example": "This is a comment"
+						"description": "Token description (optional)",
+						"example": "This is a description"
 					},
 					"expireAt": {
 						"type": "string",
@@ -241,17 +249,167 @@
 						"type": "string",
 						"description": "Token name",
 						"example": "API key for CI",
-						"pattern": "[\\S\\s]+[\\S]+"
+						"pattern": ".*[\\S\\s].*"
 					},
-					"comment": {
+					"description": {
 						"type": "string",
 						"nullable": true,
-						"description": "Token comment (optional)",
-						"example": "This is a comment"
+						"description": "Token description (optional)",
+						"example": "This is a description"
 					}
 				},
 				"required": [
 					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Color": {
+				"type": "string",
+				"description": "Hexadecimal color",
+				"pattern": "#[0-9A-Za-z]{6}"
+			},
+			"BadgeHttpEntity": {
+				"description": "Badge entity model",
+				"properties": {
+					"id": {
+						"$ref": "#/components/schemas/Id",
+						"description": "Badge identifier"
+					},
+					"name": {
+						"type": "string",
+						"description": "Badge name",
+						"example": "Badge"
+					},
+					"color": {
+						"$ref": "#/components/schemas/Color",
+						"description": "Badge color",
+						"example": "#1A2B3C"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true,
+						"description": "Badge description (optional)",
+						"example": "This is a description"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Badge creation date",
+						"example": "2023-01-01T00:00:00.000Z"
+					},
+					"updateAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Badge updating date",
+						"example": "2023-01-01T00:00:00.000Z"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"color",
+					"description",
+					"createdAt",
+					"updateAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BadgesHttpResponse": {
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"count": {
+						"type": "number",
+						"format": "double"
+					},
+					"badges": {
+						"items": {
+							"$ref": "#/components/schemas/BadgeHttpEntity"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"count",
+					"badges"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BadgeHttpResponse": {
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"badge": {
+						"$ref": "#/components/schemas/BadgeHttpEntity"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"badge"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BadgeCreateUpdateHttpEntity": {
+				"description": "Badge create/update entity model",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "New badge name",
+						"example": "Badge",
+						"pattern": ".*[\\S\\s].*"
+					},
+					"color": {
+						"$ref": "#/components/schemas/Color",
+						"description": "New badge color",
+						"example": "#1A2B3C"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true,
+						"description": "New badge description (optional)",
+						"example": "This is a description"
+					}
+				},
+				"required": [
+					"name",
+					"color"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -261,6 +419,47 @@
 				"example": "146fb209-af3b-4c67-863a-a98b641c95e5",
 				"description": "UUIDv4",
 				"pattern": "[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}"
+			},
+			"GroupHttpEntity": {
+				"description": "Group entity model",
+				"properties": {
+					"id": {
+						"$ref": "#/components/schemas/Id",
+						"description": "Group id"
+					},
+					"name": {
+						"type": "string",
+						"description": "Group name",
+						"example": "Group"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true,
+						"description": "Group description (optional)",
+						"example": "This is a description"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Group creation date",
+						"example": "2023-01-01T00:00:00.000Z"
+					},
+					"updateAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Group updating date",
+						"example": "2023-01-01T00:00:00.000Z"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"description",
+					"createdAt",
+					"updateAt"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"FileHttpEntity": {
 				"description": "File entity model",
@@ -308,6 +507,28 @@
 						"description": "File upload date",
 						"example": "2023-01-01T00:00:00.000Z"
 					},
+					"updateAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "File updating date",
+						"example": "2023-01-01T00:00:00.000Z"
+					},
+					"group": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/GroupHttpEntity"
+							}
+						],
+						"nullable": true,
+						"description": "File group"
+					},
+					"badges": {
+						"items": {
+							"$ref": "#/components/schemas/BadgeHttpEntity"
+						},
+						"type": "array",
+						"description": "File badge list"
+					},
 					"url": {
 						"type": "string",
 						"description": "File URL",
@@ -323,6 +544,9 @@
 					"hash",
 					"downloadCount",
 					"createdAt",
+					"updateAt",
+					"group",
+					"badges",
 					"url"
 				],
 				"type": "object",
@@ -483,13 +707,31 @@
 						"type": "string",
 						"description": "New file name",
 						"example": "picture.jpg",
-						"pattern": "[\\S\\s]+[\\S]+"
+						"pattern": ".*[\\S\\s].*"
 					},
 					"comment": {
 						"type": "string",
 						"nullable": true,
 						"description": "New file comment (optional)",
 						"example": "This is a comment"
+					},
+					"groupId": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Id"
+							}
+						],
+						"nullable": true,
+						"description": "New group id (optional)",
+						"example": "1"
+					},
+					"badgeIds": {
+						"items": {
+							"$ref": "#/components/schemas/Id"
+						},
+						"type": "array",
+						"nullable": true,
+						"description": "New badge id list (optional)"
 					}
 				},
 				"required": [
@@ -498,8 +740,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"OtpInitHttpResponse": {
-				"description": "One-Time Password initialization http response",
+			"GroupsHttpResponse": {
 				"properties": {
 					"httpCode": {
 						"type": "number",
@@ -517,23 +758,76 @@
 						"description": "Descriptive message of response",
 						"example": "Sample message"
 					},
-					"otpSecret": {
-						"type": "string",
-						"description": "One-Time Password secret",
-						"example": "PILQOGK4OBLTUQKI"
+					"count": {
+						"type": "number",
+						"format": "double"
 					},
-					"otpUrl": {
-						"type": "string",
-						"description": "One-Time Password link",
-						"example": "otpauth://totp/open-artifactory:admin?secret=PILQOGK4OBLTUQKI&period=30&digits=6&algorithm=SHA1&issuer=open-artifactory"
+					"groups": {
+						"items": {
+							"$ref": "#/components/schemas/GroupHttpEntity"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
 					"httpCode",
 					"error",
 					"message",
-					"otpSecret",
-					"otpUrl"
+					"count",
+					"groups"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GroupHttpResponse": {
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"group": {
+						"$ref": "#/components/schemas/GroupHttpEntity"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"group"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GroupCreateUpdateHttpEntity": {
+				"description": "Group create/update model entity",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "New group name",
+						"example": "Group",
+						"pattern": ".*[\\S\\s].*"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true,
+						"description": "New group description (optional)",
+						"example": "This is a description"
+					}
+				},
+				"required": [
+					"name"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -579,28 +873,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"OtpInitHttpEntity": {
-				"description": "One-Time Password initialization entity model",
-				"properties": {
-					"otpToken": {
-						"type": "string",
-						"description": "One-Time Password token to login",
-						"example": "1234546",
-						"pattern": "[0-9]{6}"
-					},
-					"otpSecret": {
-						"type": "string",
-						"description": "One-Time Password secret to save",
-						"example": "PILQOGK4OBLTUQKI"
-					}
-				},
-				"required": [
-					"otpToken",
-					"otpSecret"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"OtpLoginHttpEntity": {
 				"description": "One-Time Password login entity model",
 				"properties": {
@@ -613,6 +885,100 @@
 				},
 				"required": [
 					"otpToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OtpInitHttpResponse": {
+				"description": "One-Time Password initialization http response",
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"otpSecret": {
+						"type": "string",
+						"description": "One-Time Password secret",
+						"example": "PILQOGK4OBLTUQKI"
+					},
+					"otpUrl": {
+						"type": "string",
+						"description": "One-Time Password link",
+						"example": "otpauth://totp/open-artifactory:admin?secret=PILQOGK4OBLTUQKI&period=30&digits=6&algorithm=SHA1&issuer=open-artifactory"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"otpSecret",
+					"otpUrl"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OtpInitHttpEntity": {
+				"description": "One-Time Password initialization entity model",
+				"properties": {
+					"otpToken": {
+						"type": "string",
+						"description": "One-Time Password token to login",
+						"example": "1234546",
+						"pattern": "[0-9]{6}"
+					},
+					"otpSecret": {
+						"type": "string",
+						"description": "One-Time Password secret to save",
+						"example": "PILQOGK4OBLTUQKI",
+						"pattern": ".*[\\S\\s].*"
+					}
+				},
+				"required": [
+					"otpToken",
+					"otpSecret"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StatusHttpResponse": {
+				"properties": {
+					"httpCode": {
+						"type": "number",
+						"format": "double",
+						"description": "Response HTTP code",
+						"example": "200"
+					},
+					"error": {
+						"type": "boolean",
+						"description": "Error status",
+						"example": "false"
+					},
+					"message": {
+						"type": "string",
+						"description": "Descriptive message of response",
+						"example": "Sample message"
+					},
+					"ready": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"httpCode",
+					"error",
+					"message",
+					"ready"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -662,10 +1028,11 @@
 												{
 													"id": 1,
 													"name": "API key for CI",
-													"comment": "This is a comment",
+													"description": "This is a description",
 													"expireAt": "2023-01-01T00:00:00.000Z",
 													"isValid": true,
-													"createdAt": "2023-01-01T00:00:00.000Z"
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
 												}
 											]
 										}
@@ -717,7 +1084,7 @@
 					}
 				},
 				"description": "Gets API token metadata list",
-				"summary": "Get API token list",
+				"summary": "Gets API token list",
 				"tags": [
 					"Tokens"
 				],
@@ -732,7 +1099,7 @@
 				"operationId": "Generate",
 				"responses": {
 					"201": {
-						"description": "API token creation",
+						"description": "Created API token",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -747,10 +1114,11 @@
 											"apiToken": {
 												"id": 1,
 												"name": "API key for CI",
-												"comment": "This is a comment",
+												"description": "This is a description",
 												"expireAt": "2023-01-01T00:00:00.000Z",
 												"isValid": true,
-												"createdAt": "2023-01-01T00:00:00.000Z"
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
 											},
 											"bearerToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 										}
@@ -871,10 +1239,11 @@
 											"apiToken": {
 												"id": 1,
 												"name": "API key for CI",
-												"comment": "This is a comment",
+												"description": "This is a description",
 												"expireAt": "2023-01-01T00:00:00.000Z",
 												"isValid": true,
-												"createdAt": "2023-01-01T00:00:00.000Z"
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
 											}
 										}
 									}
@@ -972,10 +1341,10 @@
 				]
 			},
 			"put": {
-				"operationId": "Edit",
+				"operationId": "Update",
 				"responses": {
 					"200": {
-						"description": "API token edited",
+						"description": "Updated API token",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -986,14 +1355,15 @@
 										"value": {
 											"httpCode": 200,
 											"error": false,
-											"message": "#1 api token edited",
+											"message": "#1 api token updated",
 											"apiToken": {
 												"id": 1,
 												"name": "API key for CI",
-												"comment": "This is a comment",
+												"description": "This is a description",
 												"expireAt": "2023-01-01T00:00:00.000Z",
 												"isValid": true,
-												"createdAt": "2023-01-01T00:00:00.000Z"
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
 											}
 										}
 									}
@@ -1068,7 +1438,7 @@
 						}
 					}
 				},
-				"description": "Edits API token metadata",
+				"description": "Update API token metadata",
 				"summary": "Edits API token",
 				"tags": [
 					"Tokens"
@@ -1106,7 +1476,7 @@
 				"operationId": "Revoke",
 				"responses": {
 					"200": {
-						"description": "API token deleted",
+						"description": "Deleted API token",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1121,10 +1491,11 @@
 											"apiToken": {
 												"id": 1,
 												"name": "API key for CI",
-												"comment": "This is a comment",
+												"description": "This is a description",
 												"expireAt": "2023-01-01T00:00:00.000Z",
 												"isValid": true,
-												"createdAt": "2023-01-01T00:00:00.000Z"
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
 											}
 										}
 									}
@@ -1197,6 +1568,660 @@
 				]
 			}
 		},
+		"/badges": {
+			"get": {
+				"operationId": "GetList",
+				"responses": {
+					"200": {
+						"description": "Badge list",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BadgesHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "3 badges found",
+											"count": 3,
+											"badges": [
+												{
+													"id": 1,
+													"name": "Group",
+													"color": "#FFFFFF",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												},
+												{
+													"id": 1,
+													"name": "Group",
+													"color": "#FFFFFF",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												},
+												{
+													"id": 1,
+													"name": "Group",
+													"color": "#FFFFFF",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Gets badges list",
+				"summary": "Gets badges",
+				"tags": [
+					"Badges"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Created badge",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BadgeHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 badge created",
+											"badge": {
+												"id": 1,
+												"name": "Group",
+												"color": "#FFFFFF",
+												"description": "This is a description",
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Creates badge",
+				"summary": "Creates badge",
+				"tags": [
+					"Badges"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "badge data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BadgeCreateUpdateHttpEntity",
+								"description": "badge data"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/badges/{id}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Badge",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BadgeHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 badge named : badge",
+											"badge": {
+												"id": 1,
+												"name": "Group",
+												"color": "#FFFFFF",
+												"description": "This is a description",
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 404,
+											"message": "#1 badge not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Gets badge metadata by id",
+				"summary": "Gets badge",
+				"tags": [
+					"Badges"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "badge id to get",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Id"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Updated badge",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BadgeHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 badge updated",
+											"badge": {
+												"id": 1,
+												"name": "Group",
+												"color": "#FFFFFF",
+												"description": "This is a description",
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 404,
+											"message": "#1 badge not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates badge",
+				"summary": "Updates badge",
+				"tags": [
+					"Badges"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "badge id to edit",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Id"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "badge data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BadgeCreateUpdateHttpEntity",
+								"description": "badge data"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Deleted badge",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BadgeHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 badge deleted",
+											"badge": {
+												"id": 1,
+												"name": "Group",
+												"color": "#FFFFFF",
+												"description": "This is a description",
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 404,
+											"message": "#1 badge not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Deletes badge",
+				"summary": "Deletes badge",
+				"tags": [
+					"Badges"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "badge id to delete",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Id"
+						}
+					}
+				]
+			}
+		},
 		"/files": {
 			"get": {
 				"operationId": "GetList",
@@ -1225,7 +2250,33 @@
 													"hash": "7f4fd6614997f869edf8578d81ceba9f",
 													"downloadCount": 10,
 													"createdAt": "2023-01-01T00:00:00.000Z",
-													"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+													"updateAt": "2023-01-01T00:00:00.000Z",
+													"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5",
+													"group": {
+														"id": 1,
+														"name": "Group",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													},
+													"badges": [
+														{
+															"id": 1,
+															"name": "Group",
+															"color": "#FFFFFF",
+															"description": "This is a description",
+															"createdAt": "2023-01-01T00:00:00.000Z",
+															"updateAt": "2023-01-01T00:00:00.000Z"
+														},
+														{
+															"id": 1,
+															"name": "Group",
+															"color": "#FFFFFF",
+															"description": "This is a description",
+															"createdAt": "2023-01-01T00:00:00.000Z",
+															"updateAt": "2023-01-01T00:00:00.000Z"
+														}
+													]
 												},
 												{
 													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
@@ -1236,7 +2287,33 @@
 													"hash": "7f4fd6614997f869edf8578d81ceba9f",
 													"downloadCount": 10,
 													"createdAt": "2023-01-01T00:00:00.000Z",
-													"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+													"updateAt": "2023-01-01T00:00:00.000Z",
+													"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5",
+													"group": {
+														"id": 1,
+														"name": "Group",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													},
+													"badges": [
+														{
+															"id": 1,
+															"name": "Group",
+															"color": "#FFFFFF",
+															"description": "This is a description",
+															"createdAt": "2023-01-01T00:00:00.000Z",
+															"updateAt": "2023-01-01T00:00:00.000Z"
+														},
+														{
+															"id": 1,
+															"name": "Group",
+															"color": "#FFFFFF",
+															"description": "This is a description",
+															"createdAt": "2023-01-01T00:00:00.000Z",
+															"updateAt": "2023-01-01T00:00:00.000Z"
+														}
+													]
 												},
 												{
 													"uuid": "146fb209-af3b-4c67-863a-a98b641c95e5",
@@ -1247,7 +2324,33 @@
 													"hash": "7f4fd6614997f869edf8578d81ceba9f",
 													"downloadCount": 10,
 													"createdAt": "2023-01-01T00:00:00.000Z",
-													"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+													"updateAt": "2023-01-01T00:00:00.000Z",
+													"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5",
+													"group": {
+														"id": 1,
+														"name": "Group",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													},
+													"badges": [
+														{
+															"id": 1,
+															"name": "Group",
+															"color": "#FFFFFF",
+															"description": "This is a description",
+															"createdAt": "2023-01-01T00:00:00.000Z",
+															"updateAt": "2023-01-01T00:00:00.000Z"
+														},
+														{
+															"id": 1,
+															"name": "Group",
+															"color": "#FFFFFF",
+															"description": "This is a description",
+															"createdAt": "2023-01-01T00:00:00.000Z",
+															"updateAt": "2023-01-01T00:00:00.000Z"
+														}
+													]
 												}
 											]
 										}
@@ -1316,7 +2419,7 @@
 				"operationId": "GetStorage",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Storage details",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1494,7 +2597,33 @@
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
 												"downloadCount": 10,
 												"createdAt": "2023-01-01T00:00:00.000Z",
-												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												"updateAt": "2023-01-01T00:00:00.000Z",
+												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5",
+												"group": {
+													"id": 1,
+													"name": "Group",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												},
+												"badges": [
+													{
+														"id": 1,
+														"name": "Group",
+														"color": "#FFFFFF",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													},
+													{
+														"id": 1,
+														"name": "Group",
+														"color": "#FFFFFF",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													}
+												]
 											}
 										}
 									}
@@ -1531,7 +2660,7 @@
 								"examples": {
 									"Example 1": {
 										"value": {
-											"httpCode": 422,
+											"httpCode": 404,
 											"message": "4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found",
 											"error": true
 										}
@@ -1647,7 +2776,33 @@
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
 												"downloadCount": 10,
 												"createdAt": "2023-01-01T00:00:00.000Z",
-												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												"updateAt": "2023-01-01T00:00:00.000Z",
+												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5",
+												"group": {
+													"id": 1,
+													"name": "Group",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												},
+												"badges": [
+													{
+														"id": 1,
+														"name": "Group",
+														"color": "#FFFFFF",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													},
+													{
+														"id": 1,
+														"name": "Group",
+														"color": "#FFFFFF",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													}
+												]
 											}
 										}
 									}
@@ -1684,7 +2839,7 @@
 								"examples": {
 									"Example 1": {
 										"value": {
-											"httpCode": 422,
+											"httpCode": 404,
 											"message": "4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found",
 											"error": true
 										}
@@ -1765,7 +2920,33 @@
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
 												"downloadCount": 10,
 												"createdAt": "2023-01-01T00:00:00.000Z",
-												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												"updateAt": "2023-01-01T00:00:00.000Z",
+												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5",
+												"group": {
+													"id": 1,
+													"name": "Group",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												},
+												"badges": [
+													{
+														"id": 1,
+														"name": "Group",
+														"color": "#FFFFFF",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													},
+													{
+														"id": 1,
+														"name": "Group",
+														"color": "#FFFFFF",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													}
+												]
 											}
 										}
 									}
@@ -1802,7 +2983,7 @@
 								"examples": {
 									"Example 1": {
 										"value": {
-											"httpCode": 422,
+											"httpCode": 404,
 											"message": "4b74fdb7-b6a3-4718-964a-abf130bf3508 file not found",
 											"error": true
 										}
@@ -1857,33 +3038,55 @@
 				]
 			}
 		},
-		"/init": {
+		"/groups": {
 			"get": {
-				"operationId": "GetOtpSecret",
+				"operationId": "GetList",
 				"responses": {
 					"200": {
-						"description": "One-Time Password secret",
+						"description": "Group list",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/OtpInitHttpResponse"
+									"$ref": "#/components/schemas/GroupsHttpResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"httpCode": 200,
 											"error": false,
-											"message": "New OTP secret generated: PILQOGK4OBLTUQKI",
-											"otpSecret": "PILQOGK4OBLTUQKI",
-											"otpUrl": "otpauth://totp/open-artifactory:admin?secret=PILQOGK4OBLTUQKI&period=30&digits=6&algorithm=SHA1&issuer=open-artifactory"
+											"message": "3 groups found",
+											"count": 3,
+											"groups": [
+												{
+													"id": 1,
+													"name": "Group",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												},
+												{
+													"id": 1,
+													"name": "Group",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												},
+												{
+													"id": 1,
+													"name": "Group",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												}
+											]
 										}
 									}
 								}
 							}
 						}
 					},
-					"403": {
-						"description": "Forbidden",
+					"401": {
+						"description": "Unauthorized",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1892,8 +3095,8 @@
 								"examples": {
 									"Example 1": {
 										"value": {
-											"httpCode": 403,
-											"message": "Forbidden",
+											"httpCode": 401,
+											"message": "Unauthorized",
 											"error": true
 										}
 									}
@@ -1924,32 +3127,41 @@
 						}
 					}
 				},
-				"description": "Generates a new One-Time Password secret\nReturn a 403 error if OTP secret is already set",
-				"summary": "Get initialization data",
+				"description": "Gets group list",
+				"summary": "Gets groups",
 				"tags": [
-					"Init"
+					"Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": []
 			},
 			"post": {
-				"operationId": "SaveOtpSecret",
+				"operationId": "Create",
 				"responses": {
 					"200": {
-						"description": "Bearer token",
+						"description": "Created group",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/BearerHttpResponse"
+									"$ref": "#/components/schemas/GroupHttpResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"httpCode": 200,
 											"error": false,
-											"message": "One-Time Password secret successfully saved",
-											"jwtToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-											"expireAt": "2023-01-01T00:00:00.000Z"
+											"message": "#1 group created",
+											"group": {
+												"id": 1,
+												"name": "Group",
+												"description": "This is a description",
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
+											}
 										}
 									}
 								}
@@ -1968,25 +3180,6 @@
 										"value": {
 											"httpCode": 401,
 											"message": "Unauthorized",
-											"error": true
-										}
-									}
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorHttpResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"httpCode": 403,
-											"message": "Forbidden",
 											"error": true
 										}
 									}
@@ -2042,25 +3235,454 @@
 						}
 					}
 				},
-				"description": "Saves OTP configuration\nReturns a 403 error if OTP secret is already set\nReturns a 401 error if OTP token doesn\"t match with OTP secret",
-				"summary": "Save initialization data",
+				"description": "Creates group",
+				"summary": "Creates group",
 				"tags": [
-					"Init"
+					"Groups"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
-					"description": "One-Time Password settings",
+					"description": "group data",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/OtpInitHttpEntity",
-								"description": "One-Time Password settings"
+								"$ref": "#/components/schemas/GroupCreateUpdateHttpEntity",
+								"description": "group data"
 							}
 						}
 					}
 				}
+			}
+		},
+		"/groups/{id}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Group",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GroupHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 group named : Group",
+											"group": {
+												"id": 1,
+												"name": "Group",
+												"description": "This is a description",
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 404,
+											"message": "#1 group not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Gets group metadata by id",
+				"summary": "Gets group",
+				"tags": [
+					"Groups"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "group id to get",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Id"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Updated group",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GroupHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 group updated",
+											"group": {
+												"id": 1,
+												"name": "Group",
+												"description": "This is a description",
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 404,
+											"message": "#1 group not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates group",
+				"summary": "Updates group",
+				"tags": [
+					"Groups"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "group id to edit",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Id"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "group data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GroupCreateUpdateHttpEntity",
+								"description": "group data"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Deleted group",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GroupHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "#1 group deleted",
+											"group": {
+												"id": 1,
+												"name": "Group",
+												"description": "This is a description",
+												"createdAt": "2023-01-01T00:00:00.000Z",
+												"updateAt": "2023-01-01T00:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 404,
+											"message": "#1 group not found",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Deletes group",
+				"summary": "Deletes group",
+				"tags": [
+					"Groups"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "group id to get",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Id"
+						}
+					}
+				]
 			}
 		},
 		"/login": {
@@ -2176,6 +3798,268 @@
 				}
 			}
 		},
+		"/setup": {
+			"get": {
+				"operationId": "GetOtpSecret",
+				"responses": {
+					"200": {
+						"description": "One-Time Password secret",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OtpInitHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "New OTP secret generated: PILQOGK4OBLTUQKI",
+											"otpSecret": "PILQOGK4OBLTUQKI",
+											"otpUrl": "otpauth://totp/open-artifactory:admin?secret=PILQOGK4OBLTUQKI&period=30&digits=6&algorithm=SHA1&issuer=open-artifactory"
+										}
+									}
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 403,
+											"message": "Forbidden",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Generates a new One-Time Password secret\nReturn a 403 error if OTP secret is already set",
+				"summary": "Gets initialization data",
+				"tags": [
+					"Setup"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveOtpSecret",
+				"responses": {
+					"200": {
+						"description": "Bearer token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BearerHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "One-Time Password secret successfully saved",
+											"jwtToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+											"expireAt": "2023-01-01T00:00:00.000Z"
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 401,
+											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 403,
+											"message": "Forbidden",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation failed error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 422,
+											"message": "Validation failed",
+											"error": true,
+											"details": {
+												"field": {
+													"message": "Validation message",
+													"value": "Bad value"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Saves OTP configuration\nReturns a 403 error if OTP secret is already set\nReturns a 401 error if OTP token doesn't match with OTP secret",
+				"summary": "Saves initialization data",
+				"tags": [
+					"Setup"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "One-Time Password settings",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/OtpInitHttpEntity",
+								"description": "One-Time Password settings"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/status": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StatusHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 200,
+											"error": false,
+											"message": "'Open Artifactory is ready",
+											"ready": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 500,
+											"message": "Internal server error",
+											"error": true,
+											"details": {
+												"message": "Sample error"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Gets status of instance",
+				"summary": "Gets status",
+				"tags": [
+					"Status"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/upload": {
 			"post": {
 				"operationId": "Upload",
@@ -2202,7 +4086,33 @@
 												"hash": "7f4fd6614997f869edf8578d81ceba9f",
 												"downloadCount": 10,
 												"createdAt": "2023-01-01T00:00:00.000Z",
-												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5"
+												"updateAt": "2023-01-01T00:00:00.000Z",
+												"url": "https://exemple.com/files/146fb209-af3b-4c67-863a-a98b641c95e5",
+												"group": {
+													"id": 1,
+													"name": "Group",
+													"description": "This is a description",
+													"createdAt": "2023-01-01T00:00:00.000Z",
+													"updateAt": "2023-01-01T00:00:00.000Z"
+												},
+												"badges": [
+													{
+														"id": 1,
+														"name": "Group",
+														"color": "#FFFFFF",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													},
+													{
+														"id": 1,
+														"name": "Group",
+														"color": "#FFFFFF",
+														"description": "This is a description",
+														"createdAt": "2023-01-01T00:00:00.000Z",
+														"updateAt": "2023-01-01T00:00:00.000Z"
+													}
+												]
 											}
 										}
 									}
@@ -2222,6 +4132,25 @@
 										"value": {
 											"httpCode": 401,
 											"message": "Unauthorized",
+											"error": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unknown id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorHttpResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"httpCode": 404,
+											"message": "#1 group not found",
 											"error": true
 										}
 									}
@@ -2307,6 +4236,14 @@
 									"comment": {
 										"type": "string",
 										"description": "optional file comment"
+									},
+									"groupId": {
+										"type": "string",
+										"description": "optional group identifier"
+									},
+									"badgeIds": {
+										"type": "string",
+										"description": "optional badge identifiers list"
 									}
 								},
 								"required": [

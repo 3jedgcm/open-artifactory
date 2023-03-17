@@ -1,5 +1,5 @@
 import express from 'express'
-import dataSource from './services/datasource'
+import dataSource from './services/dataSource'
 import constants from './constants'
 import router from './api/router'
 import SecurityService from './services/tools/SecurityService'
