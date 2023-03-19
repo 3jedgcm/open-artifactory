@@ -56,7 +56,7 @@ export class BadgesController extends Controller {
     const badges = mapper.mapArray(await BadgeService.getList(), Badge, BadgeHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       count: badges.length,
       message: badges.length > 0
         ? `${badges.length} badge${badges.length === 1 ? '' : 's'} found`
