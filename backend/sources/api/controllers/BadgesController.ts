@@ -98,7 +98,7 @@ export class BadgesController extends Controller {
     const badge = mapper.map(await BadgeService.get(id), Badge, BadgeHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       message: `#${badge.id} badge named : ${badge.name}`,
       badge
     }
@@ -134,7 +134,7 @@ export class BadgesController extends Controller {
     const badge = mapper.map(await BadgeService.create(toCreatebadge), Badge, BadgeHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       message: `#${badge.id} badge created`,
       badge
     }
@@ -178,7 +178,7 @@ export class BadgesController extends Controller {
     const badge = mapper.map(await BadgeService.update(toUpdatebadge), Badge, BadgeHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       message: `#${badge.id} badge updated`,
       badge
     }
@@ -217,7 +217,7 @@ export class BadgesController extends Controller {
     const badge = mapper.map(await BadgeService.delete(id), Badge, BadgeHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       message: `#${badge.id} badge deleted`,
       badge
     }

@@ -83,7 +83,7 @@ export class SetupController extends Controller {
     error: true
   })
   @Post()
-  public async SaveOtpSecret(@Body() otpInit: OtpInitHttpEntity): Promise<BearerHttpResponse> {
+  public async saveOtpSecret(@Body() otpInit: OtpInitHttpEntity): Promise<BearerHttpResponse> {
     SecurityService.verifyOtpSecretStatus()
     SecurityService.verifyOtpToken(otpInit.otpToken, otpInit.otpSecret)
     SecurityService.saveOtpSecret(otpInit.otpSecret)

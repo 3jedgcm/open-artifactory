@@ -106,4 +106,4 @@ builds
 .idea/
 build/
 data/
-sources/generated
+backend/sources/generated

@@ -56,7 +56,7 @@ export class GroupsController extends Controller {
     const groups = mapper.mapArray(await GroupService.getList(), Group, GroupHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       count: groups.length,
       message: groups.length > 0
         ? `${groups.length} group${groups.length === 1 ? '' : 's'} found`
@@ -98,7 +98,7 @@ export class GroupsController extends Controller {
     const group = mapper.map(await GroupService.get(id), Group, GroupHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       message: `#${group.id} group named : ${group.name}`,
       group
     }
@@ -134,7 +134,7 @@ export class GroupsController extends Controller {
     const group = mapper.map(await GroupService.create(toCreateGroup), Group, GroupHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       message: `#${group.id} group created`,
       group
     }
@@ -178,7 +178,7 @@ export class GroupsController extends Controller {
     const group = mapper.map(await GroupService.update(toUpdateGroup), Group, GroupHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       message: `#${group.id} group updated`,
       group
     }
@@ -217,7 +217,7 @@ export class GroupsController extends Controller {
     const group = mapper.map(await GroupService.delete(id), Group, GroupHttpEntity)
     return {
       httpCode: 200,
-      error: true,
+      error: false,
       message: `#${group.id} group deleted`,
       group
     }
