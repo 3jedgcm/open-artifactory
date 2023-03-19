@@ -11,7 +11,7 @@ import logger from '../../services/tools/logger'
  * @param nextFunction Express NextFunction object
  */
 export default (
-  error: unknown,
+  error: any,
   request: Request,
   response: Response,
   nextFunction: NextFunction
@@ -25,15 +25,12 @@ export default (
       const validateError = error as ValidateError
       artifactoryError = new OpenArtifactoryError(422, 'Validation failed', validateError.fields)
     } else {
-      artifactoryError = new OpenArtifactoryError(500, 'Internal server error', error)
+      logger.error('An error occur :', error)
+      artifactoryError = new OpenArtifactoryError(500, 'Internal server error', { message: error.message })
     }
 
     response.status(artifactoryError.httpResponse.httpCode)
       .send(artifactoryError.httpResponse)
-
-    if (artifactoryError.httpResponse.httpCode === 500) {
-      logger.error('An error occur :', artifactoryError)
-    }
   }
   nextFunction(error)
 }

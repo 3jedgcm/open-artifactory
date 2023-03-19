@@ -175,7 +175,7 @@ export class GroupsController extends Controller {
     const toUpdateGroup = mapper.map(toUpdate, GroupCreateUpdateHttpEntity, Group)
     toUpdateGroup.id = id
 
-    const group = mapper.map(await GroupService.create(toUpdateGroup), Group, GroupHttpEntity)
+    const group = mapper.map(await GroupService.update(toUpdateGroup), Group, GroupHttpEntity)
     return {
       httpCode: 200,
       error: true,

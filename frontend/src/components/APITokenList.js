@@ -1,26 +1,26 @@
 import {
-    Button,
-    Divider,
-    Flex,
-    FormControl,
-    HStack,
-    Input,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
-    Spinner,
-    Text,
-    useToast,
-    VStack
+  Button,
+  Divider,
+  Flex,
+  FormControl,
+  HStack,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
+  Text,
+  useToast,
+  VStack
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { FaCopy, FaPlus, FaTrash } from 'react-icons/fa'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : ''
+const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : '/api/v1'
 
 export default function APITokenList({
   show,

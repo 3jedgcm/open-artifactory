@@ -114,7 +114,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Color": {
         "dataType": "refAlias",
-        "type": {"dataType":"string","validators":{"pattern":{"errorMsg":"'color' is invalid","value":"#[0-9A-Za-z]{6}"}}},
+        "type": {"dataType":"string","validators":{"pattern":{"errorMsg":"'color' is invalid","value":"^#[0-9A-Fa-f]{6}$"}}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "BadgeHttpEntity": {

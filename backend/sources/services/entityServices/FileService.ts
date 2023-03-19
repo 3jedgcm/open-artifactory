@@ -53,33 +53,29 @@ export default class FileService {
    * @throws {@link OpenArtifactoryError} if uuid does not exist in database
    */
   public static async download(uuid: Uuid) {
-    return repository.executeTransaction(async (entityManager) => {
-      const fileEntity = this.get(uuid, entityManager.getRepository(File), true, false)
-      return fileEntity
-    })
+    return repository.executeTransaction(async (entityManager) => this.get(
+      uuid,
+      entityManager.getRepository(File),
+      true,
+      false
+    ))
   }
 
   /**
    * Creates new file entity and uploads file
    * @param uploadedFile Multer file to upload
-   * @param name optional file name, if not set, original name is used
-   * @param comment optional file comment
-   * @param groupId optional file group identifier
-   * @param badgeIds optional file badge identifier list
+   * @param toCreate file metaData to upload
    * @return {@link File} uploaded file entity
    * @throws {@link OpenArtifactoryError} if an error occurs during upload
    */
   public static async upload(
     uploadedFile: Express.Multer.File,
-    name?: string,
-    comment?: string,
-    groupId?: number | null,
-    badgeIds?: number[] | null
+    toCreate: File
   ): Promise<File> {
     const storageData = await this.getStorageData()
 
     if (storageData.availableSpace < uploadedFile.size) {
-      throw new OpenArtifactoryError(500, 'Not enough storage space')
+      throw new Error('Not enough storage space')
     }
 
     return repository.executeTransaction(async (entityManager) => {
@@ -92,13 +88,16 @@ export default class FileService {
         .update(uploadedFile.buffer)
         .digest('hex')
 
-      fileEntity.name = name ?? uploadedFile.originalname
-      fileEntity.comment = comment && comment.trim().length > 0 ? comment : null
+      fileEntity.name = toCreate.name
+      fileEntity.comment = toCreate.comment
 
-      fileEntity.group = groupId
-        ? await GroupService.get(groupId, entityManager.getRepository(Group)) : null
-      fileEntity.badges = badgeIds && badgeIds.length > 0
-        ? await BadgeService.getListById(badgeIds, entityManager.getRepository(Badge)) : []
+      fileEntity.group = toCreate.group
+        ? await GroupService.get(toCreate.group.id, entityManager.getRepository(Group)) : null
+      fileEntity.badges = toCreate.badges && toCreate.badges.length > 0
+        ? await BadgeService.getListById(
+          toCreate.badges.map((badge) => badge.id),
+          entityManager.getRepository(Badge)
+        ) : []
 
       fileEntity = await fileRepository.save(fileEntity)
 
@@ -166,7 +165,7 @@ export default class FileService {
   public static async delete(uuid: Uuid): Promise<File> {
     return repository.executeTransaction(async (entityManager) => {
       const fileRepository = entityManager.getRepository(File)
-      const fileEntity = await this.get(uuid, fileRepository)
+      const fileEntity = await this.get(uuid, fileRepository, false, true)
 
       if (fs.existsSync(fileEntity.path)) {
         fs.unlinkSync(fileEntity.path)

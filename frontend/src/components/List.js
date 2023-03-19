@@ -1,4 +1,15 @@
-import { Card, CardBody, CardHeader, Container, Divider, Flex, Heading, Spinner, Text, useToast } from '@chakra-ui/react'
+import {
+    Card,
+    CardBody,
+    CardHeader,
+    Container,
+    Divider,
+    Flex,
+    Heading,
+    Spinner,
+    Text,
+    useToast
+} from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import ArtifactItem from './ArtifactItem'
 import ArtifactHeader from './ArtifactHeader'
@@ -6,9 +17,12 @@ import Footer from './Footer'
 import UploadFile from './UploadFile'
 import APITokenList from './APITokenList'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : ""
+const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : '/api/v1'
 
-export default function List({ authorization, onDisconnect }) {
+export default function List({
+    authorization,
+    onDisconnect
+}) {
 
     const [upload, setUpload] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -36,7 +50,7 @@ export default function List({ authorization, onDisconnect }) {
             })
             let resultJSON = await result.json()
             if (resultJSON.error) {
-                if(resultJSON.httpCode == 401) {
+                if (resultJSON.httpCode == 401) {
                     onDisconnect()
                 }
                 setLoading(false)
@@ -78,7 +92,7 @@ export default function List({ authorization, onDisconnect }) {
             })
             let resultJSON = await result.json()
             if (resultJSON.error) {
-                if(resultJSON.httpCode == 401) {
+                if (resultJSON.httpCode == 401) {
                     onDisconnect()
                 }
                 toast({
@@ -120,54 +134,73 @@ export default function List({ authorization, onDisconnect }) {
     const availablePercent = ((availableStorage * 100) / totalStorage).toFixed(2)
 
     return (
-        <Container maxW={900}  >
-            <UploadFile 
-                upload={upload} 
-                setUpload={(value) => setUpload(value)} 
-                authorization={authorization} 
-                getFiles={() => getFiles()}  
-                getStorage={() => getStorage()} 
-            />
-            <Card variant='outline' marginTop={4} marginBottom={4} minHeight={450}  >
-                <CardHeader pb={1}>
-                    <Heading size='lg' textAlign={{ base: 'center', sm: 'center', md: 'start' }} fontWeight='bold' color='blackAlpha.700'>Open Artifactory</Heading>
-                </CardHeader>
-                <Divider mt={3} />
-                <CardBody>
-                    {
-                        loading && files.length == 0 ?
-                            <Flex justifyContent={'center'} margin={4}>
-                                <Spinner size='lg' />
-                            </Flex>
-                            :
-                            files.length == 0 ?
-                                <Text fontSize='lg' textAlign='center' fontWeight='bold' color='blackAlpha.700'>No artifact found</Text>
-                                :
-                                <ArtifactHeader />
-                    }
-                    {
-                        files.slice(filePerPage * page, filePerPage * (page + 1)).map((file, index) => {
+      <Container maxW={900}>
+          <UploadFile
+            upload={upload}
+            setUpload={(value) => setUpload(value)}
+            authorization={authorization}
+            getFiles={() => getFiles()}
+            getStorage={() => getStorage()}
+          />
+          <Card variant='outline' marginTop={4} marginBottom={4} minHeight={450}>
+              <CardHeader pb={1}>
+                  <Heading size='lg' textAlign={{
+                      base: 'center',
+                      sm: 'center',
+                      md: 'start'
+                  }} fontWeight='bold' color='blackAlpha.700'>Open Artifactory</Heading>
+              </CardHeader>
+              <Divider mt={3}/>
+              <CardBody>
+                  {
+                      loading && files.length == 0 ?
+                        <Flex justifyContent={'center'} margin={4}>
+                            <Spinner size='lg'/>
+                        </Flex>
+                        :
+                        files.length == 0 ?
+                          <Text fontSize='lg' textAlign='center' fontWeight='bold'
+                                color='blackAlpha.700'>No artifact found</Text>
+                          :
+                          <ArtifactHeader/>
+                  }
+                  {
+                      files.slice(filePerPage * page, filePerPage * (page + 1))
+                        .map((file, index) => {
                             return (
-                                <ArtifactItem comment={file.comment} authorization={authorization} hash={file.hash} mimeType={file.mimeType} size={file.size} key={index} uuid={file.uuid} createdAt={file.createdAt} onUpdate={() => { getFiles(); getStorage() }} downloadCount={file.downloadCount} name={file.name} url={file.url} />
+                              <ArtifactItem comment={file.comment} authorization={authorization}
+                                            hash={file.hash} mimeType={file.mimeType}
+                                            size={file.size} key={index} uuid={file.uuid}
+                                            createdAt={file.createdAt} onUpdate={() => {
+                                  getFiles();
+                                  getStorage()
+                              }} downloadCount={file.downloadCount} name={file.name}
+                                            url={file.url}/>
                             )
                         })
-                    }
-                </CardBody>
-                <APITokenList show={openApi} setShow={(value) => setOpenApi(value)} authorization={authorization} onDisconnect={() => onDisconnect()} />
-                <Footer
-                    onOpenApi={() => setOpenApi(true)}
-                    nextPage={() => nextPage()}
-                    previousPage={() => previousPage()}
-                    onUpload={() => { setUpload(true) }}
-                    onRefresh={() => { getFiles(); getStorage() }}
-                    availableStorage={availableStorage}
-                    availablePercent={availablePercent}
-                    page={page}
-                    maxPage={maxPage}
-                    loading={loading}
-                />
-            </Card>
-        </Container>
+                  }
+              </CardBody>
+              <APITokenList show={openApi} setShow={(value) => setOpenApi(value)}
+                            authorization={authorization} onDisconnect={() => onDisconnect()}/>
+              <Footer
+                onOpenApi={() => setOpenApi(true)}
+                nextPage={() => nextPage()}
+                previousPage={() => previousPage()}
+                onUpload={() => {
+                    setUpload(true)
+                }}
+                onRefresh={() => {
+                    getFiles();
+                    getStorage()
+                }}
+                availableStorage={availableStorage}
+                availablePercent={availablePercent}
+                page={page}
+                maxPage={maxPage}
+                loading={loading}
+              />
+          </Card>
+      </Container>
     )
 }
 

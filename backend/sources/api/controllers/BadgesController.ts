@@ -175,7 +175,7 @@ export class BadgesController extends Controller {
     const toUpdatebadge = mapper.map(toUpdate, BadgeCreateUpdateHttpEntity, Badge)
     toUpdatebadge.id = id
 
-    const badge = mapper.map(await BadgeService.create(toUpdatebadge), Badge, BadgeHttpEntity)
+    const badge = mapper.map(await BadgeService.update(toUpdatebadge), Badge, BadgeHttpEntity)
     return {
       httpCode: 200,
       error: true,

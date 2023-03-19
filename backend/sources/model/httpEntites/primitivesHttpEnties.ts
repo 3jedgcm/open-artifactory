@@ -27,7 +27,7 @@ export type Id = number
 
 /**
  * Hexadecimal color
- * @pattern #[0-9A-Za-z]{6} 'color' is invalid
+ * @pattern ^#[0-9A-Fa-f]{6}$ 'color' is invalid
  * @example #1A2B3C
  */
 export type Color = string
