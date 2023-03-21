@@ -122,6 +122,6 @@ export default class File {
    * File URL
    */
   get url(): string {
-    return `${constants.baseUrl}files/${this.uuid}`
+    return `${constants.baseUrl}api/v1/files/${this.uuid}`
   }
 }
